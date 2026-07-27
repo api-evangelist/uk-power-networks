@@ -1,0 +1,28 @@
+generated: '2026-07-27'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.ukpowernetworks.co.uk
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 12 23:59:59 2026 GMT
+  hsts: null
+- host: ukpowernetworks.opendatasoft.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 17 21:02:03 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+domains:
+- domain: ukpowernetworks.co.uk
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject
+- domain: opendatasoft.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none

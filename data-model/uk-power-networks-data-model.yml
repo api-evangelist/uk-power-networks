@@ -1,0 +1,166 @@
+generated: '2026-06-20'
+method: derived
+source: >-
+  openapi/uk-power-networks-explore-api-v2-1-openapi.json — components.schemas $ref graph and path
+  hierarchy — cross-checked against live responses saved in examples/. Derived 2026-07-27.
+summary: >-
+  A two-level catalogue model, not a business-domain model. The API's own entities are Dataset,
+  Record, Facet, Attachment and Link; everything an energy analyst actually cares about — substations,
+  feeders, faults, flexibility dispatches, carbon intensity — lives inside Record as per-dataset
+  fields, which the contract deliberately types as an open object. That is the central shape of this
+  API: one generic contract projected over 136 differently-shaped datasets, with the real schema
+  discoverable only at runtime through the fields array on the dataset entity.
+entities:
+- name: Dataset
+  schema: '#/components/schemas/dataset'
+  id_field: dataset_id
+  id_convention: >-
+    Lowercase kebab-case, almost always prefixed ukpn- (e.g. ukpn-live-faults,
+    ukpn-carbon-intensity, ukpn-business-glossary). Exceptions exist for republished third-party
+    data, e.g. ozev-ukpn-national-chargepoint-register.
+  population: 136
+  primary_operation: getDataset
+  collection_operation: getDatasets
+  key_attributes:
+  - dataset_id
+  - dataset_uid
+  - fields (the per-dataset field schema — name, label, type, description, annotations)
+  - metas.default (title, description, theme, keywords, license, modified, records_count, publisher)
+  - visibility / data_visible
+  note: >-
+    The fields array is the runtime schema registry for this API. An agent must read it before
+    composing any ODSQL select, where, group_by or order_by clause, because field names are
+    per-dataset and are not shared across the catalogue.
+- name: Record
+  schema: '#/components/schemas/record'
+  id_field: record_id
+  primary_operation: getRecord
+  collection_operation: getRecords
+  key_attributes:
+  - per-dataset fields, typed dynamically from the parent Dataset's fields array
+  note: >-
+    Untyped at the contract level by design. Geometry-bearing datasets carry it in one of
+    geo_shape, spatial_coordinates, geo_point_2d, geo_point or geopoint — the official SDK normalises
+    across all five, which is documentary evidence that the variation is real and unmodelled.
+- name: Facet
+  schema: '#/components/schemas/facet_enumeration'
+  child_schema: '#/components/schemas/facet_value_enumeration'
+  primary_operation: getDatasetsFacets
+  scoped_operation: getRecordsFacets
+  key_attributes:
+  - name
+  - 'facets[].name'
+  - 'facets[].count'
+  - 'facets[].value'
+  - 'facets[].state'
+  note: >-
+    Facets are the discovery index. Catalogue-level facets (license, theme, publisher, keyword)
+    partition the 136 datasets; dataset-level facets partition the records inside one dataset.
+- name: Attachment
+  schema: '#/components/schemas/attachment'
+  primary_operation: getDatasetAttachments
+  key_attributes: [href, id, mimetype, title]
+  note: Non-tabular files bundled with a dataset — PDFs, methodology notes, supporting documents.
+- name: Link
+  schema: '#/components/schemas/links'
+  key_attributes: [href, rel]
+  note: >-
+    HATEOAS navigation, emitted only when include_links=true (default false). Present on every
+    collection response as a links array and mirrored in the Link response header.
+- name: ExportFormat
+  schema: '#/components/schemas/enum-format-datasets'
+  primary_operation: listExportFormats
+  scoped_operation: listDatasetExportFormats
+  values: [csv, fgb, geojson, gpx, json, jsonl, jsonld, kml, n3, ov2, parquet, rdfxml, shp, turtle, xlsx]
+  note: Not an entity so much as a controlled vocabulary that parameterises the export operations.
+relationships:
+- from: Dataset
+  to: Record
+  type: has_many
+  via: dataset_id path parameter on /catalog/datasets/{dataset_id}/records
+  evidence: path hierarchy + getRecords operation
+- from: Record
+  to: Dataset
+  type: belongs_to
+  via: dataset_id
+- from: Dataset
+  to: Attachment
+  type: has_many
+  via: /catalog/datasets/{dataset_id}/attachments
+- from: Dataset
+  to: Facet
+  type: has_many
+  via: /catalog/datasets/{dataset_id}/facets
+  note: Facets over the dataset's own records.
+- from: Catalog
+  to: Dataset
+  type: has_many
+  via: /catalog/datasets
+- from: Catalog
+  to: Facet
+  type: has_many
+  via: /catalog/facets
+  note: Facets over dataset metadata, e.g. license, theme, publisher.
+- from: Datasets
+  to: Dataset
+  type: has_many
+  via: '#/components/schemas/datasets -> results[] $ref dataset'
+  evidence: schema $ref
+- from: Records
+  to: Record
+  type: has_many
+  via: '#/components/schemas/records -> results[] $ref record'
+  evidence: schema $ref
+- from: Dataset
+  to: ExportFormat
+  type: has_many
+  via: /catalog/datasets/{dataset_id}/exports
+domain_layer:
+  note: >-
+    Below the API model sits the real UK Power Networks domain, expressed as dataset groupings rather
+    than as typed resources. The official SDK's orchestrators are the closest thing to a published
+    domain taxonomy and are recorded here as the provider's own grouping, not as an inferred one.
+  source: https://github.com/UKPN-DSO/ukpyn (README, Supported Domains)
+  groups:
+  - name: ltds
+    description: Long Term Development Statement — circuits, transformer specs, observed and forecast demand, fault levels, distributed generation, connection queues, operational restrictions, infrastructure projects, CIM network models. Published twice yearly.
+  - name: dfes
+    description: Distribution Future Energy Scenarios — network capacity headroom by scenario and local authority, peak demand forecasts.
+  - name: dnoa
+    description: Distribution Network Options Assessment — reinforcement and flexibility option assessments, low-voltage DNOA results.
+  - name: network
+    description: Aggregated network performance — annual statistics, network losses, power quality, IIS interruption data.
+  - name: flexibility
+    description: Flexibility market records — dispatch events and tender procurement data.
+  - name: curtailment
+    description: Site-specific curtailment events where generation or demand was curtailed by network instruction.
+  - name: ders
+    description: Distributed Energy Resources — embedded capacity register (>= 1 MW and < 1 MW), large demand customer list, embedded power stations. Aliased as resources.
+  - name: gis
+    description: Geospatial assets — substation sites and coverage areas, overhead lines by voltage, poles and towers, licence boundaries, IDNO areas.
+  - name: powerflow
+    description: Half-hourly and monthly operational time series for circuits and transformers at 132 kV, 33 kV (split EPN/SPN) and primary 33/11 kV.
+  registry_only_groups:
+  - Equipment — grid, primary, secondary and super-grid transformer specifications, secondary site utilisation
+  - Connections — connection queue insights, GSP-level status and narratives, wide area planning status, modification applications
+  - Operations — real-time constraint meter readings, constraint breach history, EHV outages, live faults, rota disconnection schedules
+  - Sensitivity — network sensitivity factors for import and export
+  - Smart Meter & LCT — smart meter consumption at substation and LV-feeder level, installation volumes, low carbon technology deployment by LSOA and secondary substation
+  - Profiles — standard electricity demand profiles, technology-specific generation profiles, data centre demand profiles
+  - Appendix G — Active Network Management configuration, settings, aggregated views, project progression, site conditions
+  - Reference — local authority boundaries, business glossary, data maturity scores, EV chargepoint register
+  licence_area_dimension:
+    field: licence_area
+    values:
+    - {code: EPN, name: Eastern Power Networks, region: East of England}
+    - {code: LPN, name: London Power Networks, region: Greater London}
+    - {code: SPN, name: South Eastern Power Networks, region: South East England}
+    note: The one cross-dataset dimension that behaves like a shared foreign key across the estate.
+gaps:
+  - Record has no contract-level schema; the real shape is discoverable only at runtime from the parent Dataset's fields array.
+  - No entity models the geospatial payload — five different geometry field names are in use across the estate and only the SDK reconciles them.
+  - The 403 permission state on a dataset is exposed as data_visible in metadata but is not modelled in the contract, and 403 is not a declared response.
+related:
+  conventions: conventions/uk-power-networks-conventions.yml
+  vocabulary: vocabulary/uk-power-networks-business-glossary.yml
+  examples: examples/

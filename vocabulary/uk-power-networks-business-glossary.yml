@@ -1,0 +1,112 @@
+generated: '2026-06-20'
+method: searched
+source: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-business-glossary/records
+name: UK Power Networks Open Data Portal Glossary
+description: 'The business glossary UK Power Networks publishes on its Open Data Portal, sourced from
+  the company''s internal business glossary and served as the ukpn-business-glossary dataset over the
+  same Explore API v2.1 that serves every other dataset. Captured verbatim from an anonymous records call
+  on 2026-07-27: 94 terms, licensed CC BY 4.0. The dataset publishes only the term labels through the
+  API — the human-readable definitions live on the portal glossary page linked below and were not machine-readable
+  at capture time, so no definitions are asserted here.'
+dataset_id: ukpn-business-glossary
+human_url: https://ukpowernetworks.opendatasoft.com/pages/glossary/
+license: CC BY 4.0
+publisher: UK Power Networks
+term_count: 94
+fetched: '2026-07-27'
+http_status: 200
+terms:
+- term: Already Allocated Capacity
+- term: Area of Outstanding Natural Beauty
+- term: Ask the Expert
+- term: Asset Resilience
+- term: Asset Type
+- term: Association for Decentralised Energy
+- term: Battery Storage
+- term: Bilateral Connection Agreement
+- term: Bulk Supply Point
+- term: Busbar
+- term: Capacity
+- term: Carbon Intensity
+- term: Cold site
+- term: Combined Heat and Power
+- term: Connection
+- term: Constraint
+- term: Consumption
+- term: Critical National Infrastructure
+- term: Curtailment
+- term: Customer
+- term: Deenergise
+- term: Demand
+- term: Disconnection
+- term: Distributed Energy Resources
+- term: Distributed Energy Resources Management System
+- term: Distributed Generation
+- term: Distribution
+- term: Distribution Future Energy Scenarios
+- term: Distribution Network Operator
+- term: Distribution System Operator
+- term: Electric Vehicle (EV) Charge Point
+- term: Extra High Voltage
+- term: Feeder
+- term: Flexibility Dispatch
+- term: Flexibility Services
+- term: Functional Location
+- term: Generation
+- term: Grid Substation
+- term: Grid Supply Point
+- term: Grid Transformer
+- term: Ground Mounted Transformer
+- term: Headroom
+- term: Heat Pump
+- term: High Voltage
+- term: Hot Site
+- term: Independent Distribution Network Operator
+- term: Licence Area
+- term: Load
+- term: Local Area Energy Planning
+- term: Long Term Development Statements
+- term: Low Carbon Technology
+- term: Low Voltage
+- term: Low Voltage Board
+- term: Low carbon energy source
+- term: Meter Point Administration Number
+- term: Metering
+- term: Micro CHP
+- term: Mini CHP
+- term: Net Zero
+- term: Network Asset Risk Metric
+- term: Network Development Plan
+- term: Network Losses
+- term: Network infrastructure
+- term: Network usage
+- term: Open Data
+- term: Open Data Triage
+- term: Open Streetworks
+- term: Overhead Line
+- term: Pole Mounted Transformer
+- term: Power Quality
+- term: Primary Substation
+- term: Priority Service Register
+- term: Proposed Streetworks
+- term: RIIO-ED1
+- term: RIIO-ED2
+- term: Remote Terminal Unit
+- term: Renewable Energy
+- term: Rota Load Disconnection
+- term: Secondary Substation
+- term: Smart Meter
+- term: Solar Photovoltaic
+- term: Streetworks
+- term: Substation
+- term: Super Grid Transformer
+- term: Supergrid Voltage
+- term: Supporting Information
+- term: Transformer
+- term: Transformer Rating
+- term: Transmission
+- term: Underground Cable
+- term: Unique Property Reference Number
+- term: Unique Street Reference Number
+- term: Vectorisation
+- term: Vehicle-to-Grid

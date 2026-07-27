@@ -1,0 +1,50 @@
+generated: '2026-06-20'
+method: searched
+source: anonymous HTTP probe of every apis.yml baseURL host and the corporate website host
+fetched: '2026-07-27'
+note: >-
+  The API host is ukpowernetworks.opendatasoft.com — UK Power Networks' own subdomain running an
+  Opendatasoft Explore deployment. It answers /.well-known/security.txt with an RFC 9116 document,
+  but that document names the platform vendor (Opendatasoft) rather than UK Power Networks, which is
+  recorded honestly below rather than restated as a UK Power Networks contact. The corporate host
+  www.ukpowernetworks.co.uk sits behind Akamai and returns HTTP 403 to anonymous non-browser
+  requests for every /.well-known/ path probed, so absence there is unproven rather than confirmed.
+hosts:
+- host: https://ukpowernetworks.opendatasoft.com
+  role: API host and developer portal (apis[].baseURL for both API entries)
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain
+    file: uk-power-networks-security.txt
+    note: RFC 9116. Contact mailto:security@opendatasoft.com, Expires 2050-01-01, Preferred-Languages en,fr.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  other_discovery:
+  - path: /robots.txt
+    status: 200
+  - path: /api/explore/v2.1/swagger.json
+    status: 200
+    note: OpenAPI 3.0.3 contract, saved to openapi/uk-power-networks-explore-api-v2-1-openapi.json.
+  - path: /api/explore/v2.0/swagger.json
+    status: 200
+    note: OpenAPI 3.0.3 contract, saved to openapi/uk-power-networks-explore-api-v2-0-openapi.json.
+  - path: /api/explore/v2.1/catalog/exports/dcat
+    status: 200
+    note: DCAT-AP RDF/XML catalogue export — the closest thing this provider has to an api-catalog document.
+- host: https://www.ukpowernetworks.co.uk
+  role: corporate website
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+    note: Akamai edge blocks anonymous non-browser requests; absence not confirmed.
+  - path: /.well-known/openid-configuration
+    status: 403
+  - path: /.well-known/api-catalog
+    status: 403

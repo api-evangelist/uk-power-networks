@@ -1,0 +1,196 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  openapi/uk-power-networks-explore-api-v2-1-openapi.json plus live anonymous calls against
+  https://ukpowernetworks.opendatasoft.com/api/explore/v2.1 (response headers and error bodies
+  captured 2026-07-27) and the Opendatasoft Explore API v2 reference the spec itself links to.
+docs: https://help.opendatasoft.com/apis/ods-explore-v2/
+summary: >-
+  A read-only, GET-only REST API with one cross-cutting query dialect (ODSQL) shared by nearly every
+  endpoint, offset pagination capped at 100 records per page, an API key in the query string, a
+  non-RFC-9457 two-field error envelope, and a genuinely useful rate-limit and deprecation header
+  set exposed to browsers through CORS. There are no writes, so there is no idempotency-key
+  contract — every operation is a safe HTTP GET and is therefore idempotent by method semantics.
+
+http:
+  methods_supported: [GET]
+  base_url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
+  content_type: application/json; charset=utf-8
+  cors:
+    enabled: true
+    allow_origin: '*'
+    allow_methods: [POST, GET, OPTIONS]
+    expose_headers:
+    - ODS-Explore-API-Deprecation
+    - Link
+    - X-RateLimit-Remaining
+    - X-RateLimit-Limit
+    - X-RateLimit-Reset
+    - X-RateLimit-dataset-Remaining
+    - X-RateLimit-dataset-Limit
+    - X-RateLimit-dataset-Reset
+    note: Browser clients can call the API cross-origin and read the rate-limit and deprecation headers.
+
+authentication:
+  style: api-key-query-parameter
+  parameter: apikey
+  detail: authentication/uk-power-networks-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism: http-method-safety
+  header: null
+  scope: all 16 operations
+  retention: n/a
+  note: >-
+    Honest framing: this API exposes no write operations, so there is no Idempotency-Key header and
+    no replay window to reason about. Every one of the 16 published operations is an HTTP GET, which
+    is safe and idempotent by definition — an agent can retry any call in this API without side
+    effects. That is a real idempotency guarantee, not a documented idempotency-key contract, and
+    the distinction is recorded rather than blurred.
+  agent_guidance: >-
+    Retry freely on 429 and 5xx using the X-RateLimit-Reset timestamp as the backoff floor. Do not
+    retry a 400 (ODSQL/parameter error) or a 403 (per-dataset permission) — both are stable and will
+    return the same result.
+
+pagination:
+  style: offset
+  parameters:
+  - name: limit
+    description: Number of records to return.
+    default: 10
+    max: 100
+    note: >-
+      Values above 100 are rejected with HTTP 400 InvalidRESTParameterError ("-1 <= limit <= 100 is
+      expected"). Verified live 2026-07-27. limit=-1 is accepted as "no limit" on some endpoints.
+  - name: offset
+    description: Index of the first record to return (starting at 0).
+    default: 0
+    note: >-
+      The window is capped, not the dataset: without a group_by clause offset+limit must stay below
+      10000; with a group_by, limit may go to 20000 and offset+limit must stay below 20000. Beyond
+      that window the spec directs you to the exports endpoints.
+  response_fields:
+  - total_count
+  - results
+  - links
+  link_header: >-
+    A Link response header and an in-body links array carry rel-typed navigation between endpoints,
+    controlled by the include_links parameter (default false).
+  bulk_alternative: >-
+    /catalog/datasets/{dataset_id}/exports/{format} has no record limit and is the documented route
+    for whole-dataset extraction. Formats declared in the spec enum: csv, fgb, geojson, gpx, json,
+    jsonl, jsonld, kml, n3, ov2, parquet, rdfxml, shp, turtle, xlsx. Prefer it over paginating
+    records for anything above a few thousand rows.
+
+query_language:
+  name: ODSQL (Opendatasoft Query Language)
+  docs: https://help.opendatasoft.com/apis/ods-explore-v2/
+  shared_parameters:
+  - name: select
+    role: field projection and computed expressions (the sparse-fieldset mechanism)
+  - name: where
+    role: filter predicate, SQL-like, supports search(), date ranges, geo filters
+  - name: group_by
+    role: aggregation dimension
+  - name: order_by
+    role: sort, prefix a field with - for descending
+  - name: refine
+    role: facet-value narrowing, field:value form
+  - name: exclude
+    role: facet-value exclusion, field:value form
+  - name: limit
+    role: page size
+  - name: offset
+    role: page start
+  - name: lang
+    role: language for locale-sensitive formatting
+  - name: timezone
+    role: timezone applied to datetime fields
+  - name: include_links
+    role: toggles the links array in the response
+  - name: include_app_metas
+    role: toggles application metadata in the response
+  note: >-
+    The same parameter set works across catalogue and dataset endpoints, so an agent that learns the
+    dialect once can query all 136 datasets. Field names are per-dataset — resolve them from
+    /catalog/datasets/{dataset_id} (the fields array) before composing a where or order_by clause,
+    or the call fails with ODSQLError.
+
+field_expansion:
+  supported: true
+  mechanism: select
+  note: >-
+    There is no expand parameter; select doubles as both sparse-fieldset projection and computed
+    expression, e.g. select=avg(value) as mean_value with group_by.
+
+metadata:
+  supported: read-only
+  note: >-
+    Dataset-level metadata (title, description, licence, publisher, theme, keywords, modified,
+    records_count, field schema) is returned by /catalog/datasets/{dataset_id} and is queryable
+    through the catalogue endpoints. Consumers cannot attach their own metadata — the API is read-only.
+
+request_tracing:
+  request_id_header: null
+  note: >-
+    No request-id or correlation-id header is returned. Observed response headers on a 200 are
+    server, date, content-type, content-length, the x-ratelimit trio, cache-control, vary,
+    content-language, the CORS set, strict-transport-security, x-content-type-options,
+    referrer-policy, content-security-policy, x-ua-compatible and permissions-policy. Support
+    requests therefore have to quote the full request URL and timestamp.
+
+versioning:
+  scheme: uri-path
+  current: v2.1
+  previous: v2.0
+  path_segment: /api/explore/{version}
+  detail: lifecycle/uk-power-networks-lifecycle.yml
+
+error_envelope:
+  format: custom
+  rfc9457: false
+  media_type: application/json; charset=utf-8
+  shape:
+    error_code: machine-readable error identifier, PascalCase
+    message: human-readable explanation, often naming the offending parameter and its valid range
+  example: '{"error_code": "ForbiddenAccess", "message": "You don''t have permission to access the requested resource"}'
+  quota_envelope_differs: true
+  quota_shape:
+    errorcode: numeric code, e.g. 10002
+    error: human-readable message
+    call_limit: the ceiling that was hit
+    limit_time_unit: the window unit, e.g. day
+    reset_time: ISO 8601 timestamp when the window resets
+  quota_note: >-
+    The 429 response uses a different, incompatible envelope from every other error (numeric
+    errorcode plus error, not error_code plus message). Clients must special-case 429 parsing.
+  detail: errors/uk-power-networks-problem-types.yml
+
+rate_limit_signaling:
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - X-RateLimit-dataset-Limit
+  - X-RateLimit-dataset-Remaining
+  - X-RateLimit-dataset-Reset
+  reset_format: absolute timestamp, e.g. "2026-07-28 00:00:00+00:00"
+  observed_anonymous_limit: 10000 per day
+  over_limit_status: 429
+  detail: rate-limits/uk-power-networks-rate-limits.yml
+
+caching:
+  cache_control: 'no-cache, no-store, max-age=0, must-revalidate'
+  etag: false
+  note: >-
+    The platform explicitly disables caching on API responses, so conditional requests are not
+    available. Clients that need to avoid refetching should track the dataset-level modified
+    timestamp from /catalog/datasets/{dataset_id} instead.
+
+related:
+  authentication: authentication/uk-power-networks-authentication.yml
+  errors: errors/uk-power-networks-problem-types.yml
+  lifecycle: lifecycle/uk-power-networks-lifecycle.yml
+  rate_limits: rate-limits/uk-power-networks-rate-limits.yml
+  data_model: data-model/uk-power-networks-data-model.yml

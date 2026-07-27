@@ -1,0 +1,77 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  PyPI JSON API (https://pypi.org/pypi/ukpyn/json), the UKPN-DSO GitHub organisation repo listing,
+  and the npm registry search API. Probed 2026-07-27.
+summary:
+  official_count: 1
+  languages: [python]
+  note: >-
+    UK Power Networks ships exactly one first-party client library: ukpyn, published to PyPI by its own
+    Distribution System Operator data team from the UKPN-DSO GitHub organisation. No JavaScript, Java,
+    .NET, Go, Ruby, PHP or Rust client is published by UK Power Networks — the npm registry returns no
+    ukpn/ukpowernetworks package. The Opendatasoft JavaScript client below is first-party to the
+    platform vendor, not to UK Power Networks, and is recorded as official:false for that reason.
+packages:
+- language: python
+  registry: pypi
+  name: ukpyn
+  version: 1.2.1
+  url: https://pypi.org/project/ukpyn/
+  repository: https://github.com/UKPN-DSO/ukpyn
+  documentation: https://ukpn-dso.github.io/ukpyn/
+  changelog: https://github.com/UKPN-DSO/ukpyn/blob/main/CHANGELOG.md
+  issues: https://github.com/UKPN-DSO/ukpyn/issues
+  install: pip install ukpyn
+  install_alternatives:
+  - uv pip install ukpyn
+  - pip install "ukpyn[all]"
+  official: true
+  license: CC-BY-4.0
+  requires_python: '>=3.11,<3.14'
+  author: UK Power Networks DSO Data Science & Development Team <dso.data@ukpowernetworks.co.uk>
+  provides_cli: true
+  cli_entrypoint: ukpyn = "ukpyn.cli:main"
+  description: >-
+    The official Python client for the UK Power Networks Open Data Portal. Wraps the Explore API v2.1
+    behind domain orchestrators (ltds, dfes, dnoa, network, flexibility, curtailment, ders, gis,
+    powerflow), supports sync and async use, exports to CSV/JSON/Excel/GeoJSON/Parquet, and reads the
+    portal API key from a UKPN_API_KEY environment variable.
+  evidence:
+  - source: https://pypi.org/pypi/ukpyn/json
+    http_status: 200
+    fetched: '2026-07-27'
+  - source: https://api.github.com/orgs/UKPN-DSO/repos
+    http_status: 200
+    fetched: '2026-07-27'
+    note: Repo owned by UKPN-DSO, pushed to on 2026-07-27.
+- language: javascript
+  registry: npm
+  name: '@opendatasoft/api-client'
+  version: 21.10.1
+  url: https://www.npmjs.com/package/@opendatasoft/api-client
+  repository: https://github.com/opendatasoft/ods-dataviz-sdk
+  install: npm install @opendatasoft/api-client
+  official: false
+  first_party_to: Opendatasoft (the platform vendor that hosts the UK Power Networks Open Data Portal)
+  description: >-
+    Opendatasoft's own JavaScript client for the Explore API. It works against the UK Power Networks
+    portal because the portal is an Opendatasoft deployment, but UK Power Networks neither publishes
+    nor endorses it in its own documentation, so it is not counted as a UK Power Networks SDK.
+registries_probed:
+- registry: pypi
+  result: ukpyn found (official)
+- registry: npm
+  result: no UK Power Networks package; only Opendatasoft platform packages
+- registry: maven-central
+  result: none
+- registry: nuget
+  result: none
+- registry: pkg.go.dev
+  result: none
+- registry: rubygems
+  result: none
+- registry: packagist
+  result: none
+- registry: crates.io
+  result: none

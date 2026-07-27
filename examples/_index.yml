@@ -1,0 +1,44 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  Live anonymous GET requests against https://ukpowernetworks.opendatasoft.com/api/explore/v2.1 on
+  2026-07-27. Every file is a verbatim response body, unedited. No credentials were sent, so nothing
+  here contains a key.
+api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+examples:
+- file: uk-power-networks-getDatasets-response.json
+  operation: getDatasets
+  request: GET /catalog/datasets?limit=2
+  http_status: 200
+  note: Catalogue page showing total_count 136 and the full metadata shape of a dataset entity.
+- file: uk-power-networks-getDataset-live-faults-response.json
+  operation: getDataset
+  request: GET /catalog/datasets/ukpn-live-faults
+  http_status: 200
+  note: >-
+    The dataset entity for live faults, including the fields[] array that is the runtime schema an
+    agent must read before composing any ODSQL clause.
+- file: uk-power-networks-getRecords-live-faults-response.json
+  operation: getRecords
+  request: GET /catalog/datasets/ukpn-live-faults/records?limit=2
+  http_status: 200
+  note: >-
+    Live operational rows from the Distribution Network Management System — incident reference,
+    power cut type, customers affected, affected postcodes — returned to an anonymous caller.
+- file: uk-power-networks-getRecords-carbon-intensity-response.json
+  operation: getRecords
+  request: GET /catalog/datasets/ukpn-carbon-intensity/records?limit=2
+  http_status: 200
+  note: >-
+    Half-hourly carbon intensity at Grid Supply Point level, total_count 33,736. Shows the
+    licence_area dimension (EPN/LPN/SPN) that recurs across the estate.
+- file: uk-power-networks-getDatasetsFacets-response.json
+  operation: getDatasetsFacets
+  request: GET /catalog/facets?facet=license
+  http_status: 200
+  note: Licence distribution across all 136 datasets — the fastest way to profile the catalogue.
+not_captured:
+  reason: >-
+    Responses for the 99 datasets behind the permission gate were not captured, because capturing
+    them requires an API key and this pipeline probes anonymously. The 403 body they return is
+    recorded verbatim in errors/uk-power-networks-problem-types.yml.

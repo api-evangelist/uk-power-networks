@@ -1,0 +1,70 @@
+generated: '2026-06-20'
+method: searched
+source: openapi/uk-power-networks-explore-api-v2-0-openapi.json, openapi/uk-power-networks-explore-api-v2-1-openapi.json
+docs: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+docs_secondary:
+- https://ukpn-dso.github.io/ukpyn/getting-started/
+- https://github.com/UKPN-DSO/ukpyn
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - query
+  oauth2: false
+  oidc: false
+  mtls: false
+  accreditation: false
+model: >-
+  A single API key passed as an apikey query-string parameter. There is no OAuth 2.0, no OpenID
+  Connect, no mutual TLS and no accreditation regime — /.well-known/openid-configuration and
+  /.well-known/oauth-authorization-server both return HTTP 404 on the API host. Because the key
+  travels in the query string rather than an Authorization header it will appear in server logs,
+  browser history and Referer headers; treat it as a low-sensitivity read credential and rotate it
+  from the account page rather than embedding it in shared URLs.
+schemes:
+- name: apikey
+  type: apiKey
+  in: query
+  parameter: apikey
+  description: API key to make authenticated requests.
+  applied: global (spec-level security requirement on both the v2.0 and v2.1 documents)
+  sources:
+  - openapi/uk-power-networks-explore-api-v2-0-openapi.json
+  - openapi/uk-power-networks-explore-api-v2-1-openapi.json
+anonymous_access:
+  supported: true
+  scope: >-
+    The whole catalogue surface answers anonymously — dataset listing, dataset metadata, facets and
+    the DCAT-AP export. Records answer anonymously for 36 of the 136 catalogued datasets; the other
+    99 return HTTP 403 ForbiddenAccess until a key is supplied. Verified 2026-07-27 by enumerating
+    every dataset_id and issuing an anonymous records call against each.
+  rate_limit: 10000 calls per day (x-ratelimit-limit header on an anonymous 200)
+onboarding:
+  gate: self-serve
+  approval_required: false
+  cost: free
+  steps:
+  - Create a free account at https://ukpowernetworks.opendatasoft.com/signup/
+  - Sign in and open https://ukpowernetworks.opendatasoft.com/account/api-keys/
+  - Generate a key
+  - Pass it on every call as the apikey query parameter
+  sdk_convention: >-
+    The official Python client (ukpyn) reads the key from a UKPN_API_KEY environment variable or a
+    .env file rather than taking it inline.
+evidence:
+- source: openapi securitySchemes (both documents)
+  value: '{"apikey": {"type": "apiKey", "name": "apikey", "in": "query"}}'
+- source: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+  http_status: 200
+  fetched: '2026-07-27'
+  note: Redirects to /login/?next=/account/api-keys/ when unauthenticated.
+- source: https://ukpowernetworks.opendatasoft.com/.well-known/openid-configuration
+  http_status: 404
+  fetched: '2026-07-27'
+- source: https://ukpowernetworks.opendatasoft.com/.well-known/oauth-authorization-server
+  http_status: 404
+  fetched: '2026-07-27'
+related:
+  scopes: null
+  conventions: conventions/uk-power-networks-conventions.yml
+  well_known: well-known/uk-power-networks-well-known.yml

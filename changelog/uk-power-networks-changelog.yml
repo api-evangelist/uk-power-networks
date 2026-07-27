@@ -1,0 +1,76 @@
+generated: '2026-06-20'
+method: searched
+source: https://github.com/UKPN-DSO/ukpyn/blob/main/CHANGELOG.md
+source_raw: https://raw.githubusercontent.com/UKPN-DSO/ukpyn/main/CHANGELOG.md
+fetched: '2026-07-27'
+http_status: 200
+scope: sdk
+scope_note: >-
+  This is the changelog for ukpyn, the official UK Power Networks Python client — the only dated,
+  structured change record UK Power Networks publishes for anything in this API estate. There is no
+  changelog for the Explore API itself: the API's change signal is the version segment in the URL
+  (v2.0 / v2.1) and the ODS-Explore-API-Deprecation response header, and the data's change signal is
+  the per-dataset modified timestamp. Recorded as an SDK changelog rather than presented as an API
+  changelog.
+scheme: semver
+format: Keep a Changelog 1.1.0
+current_version: 1.2.1
+release_automation: >-
+  The version-tag release workflow automatically promotes the [Unreleased] section to a dated
+  version heading on each bump, keeping the changelog in sync with what ships to PyPI.
+entries:
+- version: 1.2.1
+  date: '2026-06-25'
+  breaking: false
+  changed:
+  - Release workflow now auto-promotes the CHANGELOG [Unreleased] section to a dated version heading on each bump.
+- version: 1.2.0
+  date: '2026-06-25'
+  breaking: false
+  added:
+  - Record.geometry — normalised GeoJSON geometry accessor resolving from geo_shape, spatial_coordinates, geo_point_2d, geo_point or geopoint, converting {"lat","lon"} dicts to GeoJSON Point.
+  - dimensions parameter on GISOrchestrator.export_geojson() — "2d" strips Z, "3d" ensures Z, "raw" passes through.
+  changed:
+  - 'Applied the ukpn- prefix to renamed portal dataset IDs: ltds-table-3a-load-data-observed became ukpn-ltds-table-3a-load-data-observed; dfes-network-headroom-report became ukpn-dfes-network-headroom-report.'
+  fixed:
+  - NaN / Infinity values in record fields are sanitised to None on parse — the portal occasionally returns float('nan'), which is invalid JSON.
+  - GeoJSON Feature wrappers in geometry fields are unwrapped to bare geometry dicts.
+  upstream_signal: >-
+    The dataset-ID renames are a real, undocumented breaking change on the API side that surfaced
+    only in the SDK changelog. The portal itself published no notice.
+- version: 0.1.10
+  date: null
+  breaking: false
+  chore:
+  - Tidied pyproject.toml dependency declarations.
+- version: 0.1.9
+  date: null
+  breaking: false
+  fixed:
+  - NOTICE file now correctly references CC-BY-4.0 (was Apache 2.0).
+  - Backfilled changelog entries for v0.1.1 through v0.1.8.
+- version: 0.1.8
+  date: '2025-03-12'
+  breaking: false
+  added:
+  - Production PyPI publish workflow with trusted publishing.
+  - TestPyPI pre-release publish workflow.
+  fixed:
+  - Pinned GitHub Action SHAs for CodeQL compliance.
+  - Automatic dev branch sync after version-tag bumps on main.
+  - Test fixes for curtailment column names, LTDS substation columns, CLI parser and the Record model.
+- version: 0.1.7
+  date: '2025-03-11'
+  breaking: false
+  changed:
+  - GitHub Actions pinned to commit SHAs instead of version tags.
+api_change_signals:
+  version_in_path: /api/explore/{version} — v2.0 and v2.1 both live
+  deprecation_header: ODS-Explore-API-Deprecation (exposed via CORS on every response)
+  dataset_modified_timestamp: per-dataset metas.default.modified
+  registry_audit: >-
+    A daily GitHub Actions job in the SDK repo audits the portal catalogue and opens a triage issue
+    when new unmanaged datasets appear — an automated detector for catalogue change.
+related:
+  lifecycle: lifecycle/uk-power-networks-lifecycle.yml
+  packages: packages/uk-power-networks-packages.yml

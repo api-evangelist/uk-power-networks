@@ -1,0 +1,121 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  Derived from the 4xx/5xx responses declared on all 16 operations in
+  openapi/uk-power-networks-explore-api-v2-1-openapi.json (identical in the v2.0 document), then
+  enriched with error bodies captured live from
+  https://ukpowernetworks.opendatasoft.com/api/explore/v2.1 on 2026-07-27.
+format: custom
+rfc9457: false
+envelope:
+  media_type: application/json; charset=utf-8
+  fields:
+    error_code:
+      type: string
+      description: Machine-readable error identifier in PascalCase. Match on this, not the message.
+    message:
+      type: string
+      description: Human-readable explanation. Frequently names the offending parameter and its valid range.
+  required: [error_code, message]
+  exception: >-
+    HTTP 429 uses a different envelope entirely — errorcode (number), error (string), call_limit,
+    limit_time_unit and reset_time. Parse 429 separately.
+status_coverage:
+  declared_on_every_operation: [200, 400, 401, 429, 500]
+  observed_but_undeclared: [403, 404]
+  note: >-
+    Both v2.0 and v2.1 declare the same five status codes on all 16 operations. Two statuses the API
+    genuinely returns are absent from the contract: 403 ForbiddenAccess (the per-dataset permission
+    gate that covers 99 of 136 datasets — the single most likely error an anonymous client will hit)
+    and 404 NotFoundResource for an unknown dataset_id. This is the clearest gap between the
+    published contract and the running service, and it is recorded rather than patched.
+problems:
+- status: 400
+  error_code: ODSQLError
+  title: ODSQL query is malformed
+  detail: >-
+    A select, where, group_by, order_by, refine or exclude clause references an unknown field or an
+    unknown function. The message names the offending clause.
+  observed_example: '{"error_code": "ODSQLError", "message": "ODSQL query is malformed: Unknown field: datetime. Clause(s) containing the error(s): order_by."}'
+  remediation: >-
+    Resolve the dataset field names first via GET /catalog/datasets/{dataset_id} (the fields array)
+    and compose the clause from those names. Field names are per-dataset and are not shared.
+  retryable: false
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecords
+  verified: live
+- status: 400
+  error_code: InvalidRESTParameterError
+  title: Invalid value for a REST parameter
+  detail: A query parameter is outside its permitted range or of the wrong type.
+  observed_example: '{"error_code": "InvalidRESTParameterError", "message": "Invalid value for limit API parameter: 99999 was found but -1 <= limit <= 100 is expected."}'
+  remediation: >-
+    Keep limit within -1..100 for non-aggregated queries (up to 20000 with a group_by clause) and
+    offset+limit below 10000. For larger extractions use the exports endpoints, which are uncapped.
+  retryable: false
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecords
+  verified: live
+- status: 401
+  title: Unauthorized
+  detail: >-
+    Declared on every operation in the spec with a bare "Unauthorized" description and no schema. In
+    practice the portal answers a missing or unusable key on a restricted dataset with 403
+    ForbiddenAccess rather than 401.
+  remediation: Supply a valid apikey query parameter minted at https://ukpowernetworks.opendatasoft.com/account/api-keys/.
+  retryable: false
+  source_operation: all 16 operations
+  verified: spec-only
+- status: 403
+  error_code: ForbiddenAccess
+  title: Dataset not visible to this caller
+  detail: >-
+    The dataset exists in the catalogue but its records are not readable by the caller. This is a
+    per-dataset permission, not a quota — it is stable across retries. 99 of the 136 catalogued
+    datasets returned this to an anonymous caller on 2026-07-27; the blocked datasets carry
+    "data_visible": false in their own metadata. Licence is not the discriminator — CC BY 4.0
+    datasets are among the blocked.
+  observed_example: '{"error_code": "ForbiddenAccess", "message": "You don''t have permission to access the requested resource"}'
+  remediation: >-
+    Register a free account, mint an API key and pass it as apikey. Do not retry unauthenticated —
+    the result will not change.
+  retryable: false
+  undeclared_in_spec: true
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecords
+  verified: live
+- status: 404
+  error_code: NotFoundResource
+  title: Requested dataset does not exist
+  detail: The dataset_id path parameter does not match any dataset in the catalogue.
+  observed_example: '{"error_code": "NotFoundResource", "message": "The requested dataset does-not-exist-xyz does not exist."}'
+  remediation: >-
+    Enumerate valid identifiers with GET /catalog/datasets?select=dataset_id and match exactly;
+    identifiers are case-sensitive and most carry a ukpn- prefix.
+  retryable: false
+  undeclared_in_spec: true
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getDataset
+  verified: live
+- status: 429
+  error_code: '10002'
+  title: Too many requests
+  detail: >-
+    The domain or per-dataset call budget for the window has been exhausted. The anonymous domain
+    budget observed on 2026-07-27 was 10,000 calls per day, resetting at 00:00:00+00:00.
+  spec_example: '{"errorcode": 10002, "reset_time": "2021-01-26T00:00:00Z", "limit_time_unit": "day", "call_limit": 10000, "error": "Too many requests on the domain. Please contact the domain administrator."}'
+  remediation: >-
+    Back off until reset_time (also carried in the X-RateLimit-Reset response header) and read
+    X-RateLimit-Remaining before resuming. Per-dataset budgets are signalled separately through the
+    X-RateLimit-dataset-* headers.
+  retryable: true
+  retry_after_source: reset_time body field and X-RateLimit-Reset header
+  source_operation: all 16 operations
+  verified: spec-declared
+- status: 500
+  title: Internal Server Error
+  detail: Declared on every operation with no schema. No instance was observed during probing.
+  remediation: Retry with exponential backoff. All operations are GETs, so retries are safe.
+  retryable: true
+  source_operation: all 16 operations
+  verified: spec-only
+related:
+  conventions: conventions/uk-power-networks-conventions.yml
+  rate_limits: rate-limits/uk-power-networks-rate-limits.yml
+  authentication: authentication/uk-power-networks-authentication.yml

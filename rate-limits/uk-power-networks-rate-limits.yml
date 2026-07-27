@@ -1,0 +1,66 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  Live response headers captured from
+  https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets?limit=1 on 2026-07-27,
+  plus the 429 quota response declared in openapi/uk-power-networks-explore-api-v2-1-openapi.json.
+signaling:
+  headers:
+  - name: X-RateLimit-Limit
+    scope: domain
+    observed: '10000'
+  - name: X-RateLimit-Remaining
+    scope: domain
+    observed: '9822'
+  - name: X-RateLimit-Reset
+    scope: domain
+    observed: '2026-07-28 00:00:00+00:00'
+    format: absolute timestamp, not a delta
+  - name: X-RateLimit-dataset-Limit
+    scope: per-dataset
+    observed: declared in access-control-expose-headers; not returned on the catalogue call probed
+  - name: X-RateLimit-dataset-Remaining
+    scope: per-dataset
+    observed: declared in access-control-expose-headers
+  - name: X-RateLimit-dataset-Reset
+    scope: per-dataset
+    observed: declared in access-control-expose-headers
+  cors_exposed: true
+  note: >-
+    The rate-limit headers are listed in access-control-expose-headers, so browser clients can read
+    their own budget cross-origin.
+rate_limits:
+- tier: anonymous
+  limit_count: 10000
+  interval: day
+  scope: domain
+  reset: midnight UTC
+  authenticated: false
+  source: X-RateLimit-Limit header on an anonymous HTTP 200
+  verified: '2026-07-27'
+- tier: per-dataset
+  limit_count: null
+  interval: unknown
+  scope: dataset
+  authenticated: null
+  source: X-RateLimit-dataset-Limit header declared in access-control-expose-headers
+  note: >-
+    A per-dataset budget demonstrably exists alongside the domain budget, but no value was observed
+    anonymously and UK Power Networks publishes no figure. Recorded as present-with-unknown-ceiling
+    rather than guessed.
+over_limit:
+  status: 429
+  body_fields: [errorcode, error, call_limit, limit_time_unit, reset_time]
+  spec_example_call_limit: 10000
+  spec_example_unit: day
+  guidance: >-
+    Back off to reset_time. Because every operation is a safe GET, retry after the window resets is
+    always safe. For bulk extraction use /catalog/datasets/{dataset_id}/exports/{format}, which
+    returns a whole dataset in one call instead of burning the budget on pagination.
+published_policy_url: null
+published_policy_note: >-
+  UK Power Networks documents no rate-limit policy page. Everything above was measured from live
+  response headers and the OpenAPI quota response, not read from a published limits page.
+related:
+  conventions: conventions/uk-power-networks-conventions.yml
+  errors: errors/uk-power-networks-problem-types.yml

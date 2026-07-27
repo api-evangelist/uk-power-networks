@@ -1,0 +1,216 @@
+generated: '2026-06-20'
+method: derived
+source: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+status: candidate
+published_server: null
+search_note: No official or hosted MCP server exists for UK Power Networks. Searched the UKPN-DSO GitHub organisation
+  (6 repos, none MCP), npm (no ukpn/ukpowernetworks package; the only Opendatasoft-adjacent MCP packages are third-party
+  @pipeworx/mcp-* servers for French and Belgian Opendatasoft portals, not for UK Power Networks), and the portal's
+  own pages. Probed 2026-07-27. The tool list below is DERIVED from the OpenAPI as a candidate design, not a server
+  anyone can connect to today.
+third_party_note: A third-party generic Opendatasoft MCP server (@pipeworx/mcp-opendatasoft) exists on npm. It is
+  not published by UK Power Networks or by Opendatasoft and was not verified against this portal, so it is recorded
+  as context only and is not treated as this provider's MCP surface.
+server:
+  name: uk-power-networks
+  transport: http
+  url: null
+  auth: The backing API takes an apikey query parameter; a server implementing these tools would hold the key server-side
+    and expose no credential to the agent.
+design_notes:
+- Every tool is read-only. All 16 backing operations are HTTP GETs, so every tool is safe to retry.
+- 'discover_datasets then get_dataset then query_records is the mandatory sequence: field names are per-dataset
+  and must be read from the dataset fields array before any ODSQL clause is composed, or the call fails with ODSQLError.'
+- export_records is uncapped and should be preferred over paginating query_records past a few thousand rows.
+- 99 of 136 datasets return HTTP 403 ForbiddenAccess without an API key, so a server without a key can only serve
+  a third of the catalogue.
+tools:
+- name: get_datasets
+  description: Query catalog datasets
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getDatasets
+  method: GET
+  path: /catalog/datasets
+  parameters:
+  - select
+  - where
+  - order_by
+  - limit
+  - offset
+  - refine
+  - exclude
+  - lang
+  - timezone
+  - group_by
+  - include_links
+  - include_app_metas
+- name: list_export_formats
+  description: List export formats
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#listExportFormats
+  method: GET
+  path: /catalog/exports
+  parameters: []
+- name: export_datasets
+  description: Export a catalog
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportDatasets
+  method: GET
+  path: /catalog/exports/{format}
+  parameters:
+  - format-catalog
+  - select
+  - where
+  - order_by
+  - group_by
+  - limit_export
+  - offset
+  - refine
+  - exclude
+  - lang
+  - timezone
+- name: export_catalog_c_s_v
+  description: Export a catalog in CSV
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportCatalogCSV
+  method: GET
+  path: /catalog/exports/csv
+  parameters:
+  - delimiter
+  - list_separator
+  - quote_all
+  - with_bom
+- name: export_catalog_d_c_a_t
+  description: Export a catalog in RDF/XML (DCAT)
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportCatalogDCAT
+  method: GET
+  path: /catalog/exports/dcat{dcat_ap_format}
+  parameters:
+  - dcat_format
+  - include_exports
+  - use_labels_in_exports
+- name: get_datasets_facets
+  description: List facet values
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getDatasetsFacets
+  method: GET
+  path: /catalog/facets
+  parameters:
+  - facet
+  - refine
+  - exclude
+  - where
+  - timezone
+- name: get_records
+  description: Query dataset records
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecords
+  method: GET
+  path: /catalog/datasets/{dataset_id}/records
+  parameters:
+  - dataset_id
+  - select
+  - where
+  - group_by
+  - order_by
+  - limit
+  - offset
+  - refine
+  - exclude
+  - lang
+  - timezone
+  - include_links
+  - include_app_metas
+- name: list_dataset_export_formats
+  description: List export formats
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#listDatasetExportFormats
+  method: GET
+  path: /catalog/datasets/{dataset_id}/exports
+  parameters:
+  - dataset_id
+- name: export_records
+  description: Export a dataset
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportRecords
+  method: GET
+  path: /catalog/datasets/{dataset_id}/exports/{format}
+  parameters:
+  - dataset_id
+  - format-datasets
+  - select
+  - where
+  - order_by
+  - group_by
+  - limit_export
+  - refine
+  - exclude
+  - lang
+  - timezone
+  - use_labels
+  - compressed
+  - epsg
+- name: export_records_c_s_v
+  description: Export a dataset in CSV
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportRecordsCSV
+  method: GET
+  path: /catalog/datasets/{dataset_id}/exports/csv
+  parameters:
+  - dataset_id
+  - delimiter
+  - list_separator
+  - quote_all
+  - with_bom
+- name: export_records_parquet
+  description: Export a dataset in Parquet
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportRecordsParquet
+  method: GET
+  path: /catalog/datasets/{dataset_id}/exports/parquet
+  parameters:
+  - dataset_id
+  - parquet_compression
+- name: export_records_g_p_x
+  description: Export a dataset in GPX
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#exportRecordsGPX
+  method: GET
+  path: /catalog/datasets/{dataset_id}/exports/gpx
+  parameters:
+  - dataset_id
+  - name_field
+  - description_field_list
+  - use_extension
+- name: get_dataset
+  description: Show dataset information
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getDataset
+  method: GET
+  path: /catalog/datasets/{dataset_id}
+  parameters:
+  - dataset_id
+  - select
+  - lang
+  - timezone
+  - include_links
+  - include_app_metas
+- name: get_records_facets
+  description: List dataset facets
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecordsFacets
+  method: GET
+  path: /catalog/datasets/{dataset_id}/facets
+  parameters:
+  - dataset_id
+  - where
+  - refine
+  - exclude
+  - facet
+  - lang
+  - timezone
+- name: get_dataset_attachments
+  description: List dataset attachments
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getDatasetAttachments
+  method: GET
+  path: /catalog/datasets/{dataset_id}/attachments
+  parameters:
+  - dataset_id
+- name: get_record
+  description: Read a dataset record
+  source_operation: openapi/uk-power-networks-explore-api-v2-1-openapi.json#getRecord
+  method: GET
+  path: /catalog/datasets/{dataset_id}/records/{record_id}
+  parameters:
+  - dataset_id
+  - record_id
+  - select
+  - lang
+  - timezone

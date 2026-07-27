@@ -1,0 +1,58 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  https://raw.githubusercontent.com/UKPN-DSO/ukpyn/main/pyproject.toml (project.scripts entry point)
+  and https://raw.githubusercontent.com/UKPN-DSO/ukpyn/main/src/ukpyn/cli.py (the argparse parser).
+  Fetched 2026-07-27.
+name: ukpyn
+official: true
+owner: UK Power Networks DSO Data Science & Development Team
+repository: https://github.com/UKPN-DSO/ukpyn
+documentation: https://ukpn-dso.github.io/ukpyn/
+maturity: minimal
+maturity_note: >-
+  Honest scope: the ukpyn CLI is an onboarding shim, not a data CLI. It ships as a console entry
+  point of the official Python package and implements exactly two subcommands — version and
+  quickstart — with quickstart printing pointers to the tutorial notebooks. There is no command to
+  query a dataset, export records or manage an API key from the shell. Everything real happens in
+  the Python API. Recorded at its true size rather than inflated into a command surface it does not
+  have.
+install:
+- method: pip
+  command: pip install ukpyn
+- method: uv
+  command: uv pip install ukpyn
+- method: pipx
+  command: pipx install ukpyn
+  note: Not documented by the provider; listed as the standard way to get a console script in isolation.
+entry_point: 'ukpyn = "ukpyn.cli:main"'
+authentication:
+  mechanism: environment variable
+  variable: UKPN_API_KEY
+  dotenv: true
+  note: >-
+    The package (not the CLI subcommands) reads UKPN_API_KEY from the environment or a .env file in
+    the project root. There is no ukpyn login or ukpyn config command.
+commands:
+- command: ukpyn
+  description: Prints the quickstart pointers (same as ukpyn quickstart) when invoked with no subcommand.
+- command: ukpyn version
+  description: Show the installed ukpyn version.
+- command: ukpyn quickstart
+  description: >-
+    Show beginner and advanced getting-started resources — pointers to
+    tutorials/01-getting-started.ipynb, tutorials/02-fetching-data.ipynb,
+    tutorials/03-analysis-patterns.ipynb and the docs site.
+- command: ukpyn --help
+  description: argparse-generated help for the top-level parser.
+absent:
+- No dataset query or search subcommand
+- No export subcommand
+- No credential management subcommand
+- No shell completion
+python_surface_note: >-
+  The real command surface for shell users is python -m or a short script against the domain
+  orchestrators — ltds, dfes, dnoa, network, flexibility, curtailment, ders (alias resources), gis
+  and powerflow — each of which wraps a group of portal datasets.
+related:
+  packages: packages/uk-power-networks-packages.yml

@@ -1,0 +1,53 @@
+generated: '2026-06-20'
+method: generated
+source: >-
+  Grounded in the 16 operationIds published in
+  openapi/uk-power-networks-explore-api-v2-1-openapi.json, plus the conventions, error and
+  rate-limit artifacts derived alongside them. Every operationId referenced was verified against the
+  spec; none was invented.
+api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+base_url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
+note: >-
+  UK Power Networks publishes no agent skills or AGENTS.md of its own — the UKPN-DSO GitHub
+  organisation was searched on 2026-07-27 and carries six repositories, none of which ship agent
+  instructions. These four are generated from the machine-readable contract and the measured
+  behaviour of the running service.
+skills:
+- file: uk-power-networks-discover-datasets.md
+  name: Discover UK Power Networks datasets and resolve their field schema
+  summary: >-
+    The mandatory first step. Facet and search the 136-dataset catalogue, then read the per-dataset
+    fields array that is the only legal source of identifiers for any ODSQL clause.
+  api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+  operations: [getDatasets, getDatasetsFacets, getDataset]
+- file: uk-power-networks-query-records.md
+  name: Query and aggregate UK Power Networks dataset records
+  summary: >-
+    Filter, sort, aggregate and page records with ODSQL. Covers the 36-of-136 anonymous reach, the
+    paging ceilings, the group_by ceiling, and the two errors that actually occur.
+  api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+  operations: [getRecords, getRecord, getRecordsFacets]
+- file: uk-power-networks-export-dataset.md
+  name: Bulk-export a UK Power Networks dataset
+  summary: >-
+    Replace hundreds of paged calls with one uncapped export in any of fifteen formats, filtered
+    with the same ODSQL dialect, plus dataset attachment retrieval.
+  api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+  operations: [listDatasetExportFormats, exportRecords, exportRecordsCSV, exportRecordsParquet, exportRecordsGPX, getDatasetAttachments]
+- file: uk-power-networks-harvest-catalogue.md
+  name: Harvest the UK Power Networks catalogue as DCAT-AP
+  summary: >-
+    Federate the whole catalogue as DCAT-AP RDF or CSV, profile it by licence and theme, and
+    establish what is actually reachable before building — licence does not predict access here.
+  api: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+  operations: [exportCatalogDCAT, exportCatalogCSV, exportDatasets, listExportFormats, getDatasetsFacets, getDatasets]
+operations_not_covered:
+- exportRecordsGPX is referenced but is a niche GPS-track format
+- getRecord is covered only briefly; single-record fetch is rare against this catalogue
+related:
+  conventions: conventions/uk-power-networks-conventions.yml
+  errors: errors/uk-power-networks-problem-types.yml
+  authentication: authentication/uk-power-networks-authentication.yml
+  rate_limits: rate-limits/uk-power-networks-rate-limits.yml
+  data_model: data-model/uk-power-networks-data-model.yml
+  mcp: mcp/uk-power-networks-mcp.yml

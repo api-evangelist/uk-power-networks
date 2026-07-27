@@ -1,0 +1,74 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for UK Power Networks Open Data Explore API v2.1
+  version: 1.0.0
+extends: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: uk-power-networks
+    x-apievangelist-enriched: '2026-06-20'
+    x-apievangelist-note: Harvested verbatim from https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+      on 2026-07-27. The title and contact in the original name the platform vendor (Opendatasoft), not the operator
+      of this deployment; this overlay attributes the surface to UK Power Networks without mutating the harvested
+      document.
+    x-apievangelist-operator: UK Power Networks (London Power Networks, South Eastern Power Networks, Eastern Power
+      Networks)
+    x-apievangelist-platform: Opendatasoft Explore
+- target: $.info
+  update:
+    x-apievangelist-artifacts:
+      authentication: authentication/uk-power-networks-authentication.yml
+      conventions: conventions/uk-power-networks-conventions.yml
+      errors: errors/uk-power-networks-problem-types.yml
+      lifecycle: lifecycle/uk-power-networks-lifecycle.yml
+      rate-limits: rate-limits/uk-power-networks-rate-limits.yml
+      data-model: data-model/uk-power-networks-data-model.yml
+      conformance: conformance/uk-power-networks-conformance.yml
+      vocabulary: vocabulary/uk-power-networks-business-glossary.yml
+      agentic-access: agentic-access/uk-power-networks-agentic-access.yml
+      skills: skills/_index.yml
+      examples: examples/
+- target: $.info
+  update:
+    x-apievangelist-access:
+      gate: self-serve
+      anonymous-catalogue: true
+      anonymous-records-datasets: 36
+      gated-records-datasets: 99
+      total-datasets: 136
+      measured: '2026-07-27'
+      note: Every dataset_id was enumerated and a records call issued anonymously against each. 99 returned HTTP
+        403 ForbiddenAccess; registration is free and self-serve.
+- target: $.info
+  update:
+    x-apievangelist-rate-limit:
+      anonymous-daily: 10000
+      headers:
+      - X-RateLimit-Limit
+      - X-RateLimit-Remaining
+      - X-RateLimit-Reset
+      - X-RateLimit-dataset-Limit
+      - X-RateLimit-dataset-Remaining
+      - X-RateLimit-dataset-Reset
+      measured: '2026-07-27'
+- target: $.info
+  update:
+    x-apievangelist-undeclared-responses:
+      note: Two statuses the running service genuinely returns are absent from every operation in this document.
+        Documented in errors/uk-power-networks-problem-types.yml rather than injected into the contract.
+      '403': ForbiddenAccess — per-dataset permission gate covering 99 of 136 datasets.
+      '404': NotFoundResource — unknown dataset_id.
+- target: $.paths['/catalog/datasets/{dataset_id}/records'].get
+  update:
+    x-apievangelist-precondition: Read the parent dataset field schema via getDataset before composing any select,
+      where, group_by or order_by clause. Field names are per-dataset; an unknown field yields HTTP 400 ODSQLError.
+    x-apievangelist-bulk-alternative: exportRecords — uncapped, and the documented route for anything beyond the
+      offset+limit < 10000 window.
+- target: $.components.securitySchemes.apikey
+  update:
+    x-apievangelist-warning: The key travels in the query string, so it will appear in server logs, browser history
+      and Referer headers. Treat it as a low-sensitivity read credential and rotate it from the account page rather
+      than embedding it in shared URLs.
+    x-apievangelist-key-url: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+    x-apievangelist-sdk-convention: The official Python client reads it from a UKPN_API_KEY environment variable.

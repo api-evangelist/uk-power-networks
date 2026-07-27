@@ -1,0 +1,82 @@
+generated: '2026-06-20'
+method: searched
+source: >-
+  Live probes of both API versions on ukpowernetworks.opendatasoft.com, the
+  access-control-expose-headers response header, the two OpenAPI documents in openapi/, and the
+  Opendatasoft Explore API v2 reference the spec links to. Probed 2026-07-27.
+versioning:
+  scheme: uri-path
+  current: v2.1
+  previous: v2.0
+  pattern: https://ukpowernetworks.opendatasoft.com/api/explore/{version}
+  versions:
+  - version: v2.1
+    status: current
+    spec: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+    spec_url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+    http_status: 200
+    operations: 16
+  - version: v2.0
+    status: available
+    spec: openapi/uk-power-networks-explore-api-v2-0-openapi.json
+    spec_url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
+    http_status: 200
+    operations: 16
+    alias: /api/v2/swagger.json also serves this document
+    note: >-
+      Still live and still separately contracted with the same 16 operations. No sunset date is
+      published for it. New integrations should target v2.1.
+  breaking_change_policy_url: null
+  note: >-
+    The version segment is the only versioning signal — there is no version header, no date-pinned
+    version and no published deprecation calendar. Both versions currently answer, so the
+    versioning contract is "the old one keeps working until it does not".
+deprecation:
+  policy_url: https://help.opendatasoft.com/apis/ods-explore-v2/
+  sunset_header: false
+  deprecation_header: true
+  header_name: ODS-Explore-API-Deprecation
+  evidence: >-
+    ODS-Explore-API-Deprecation is the first entry in access-control-expose-headers on every
+    response from the API host, so the platform carries a machine-readable, browser-readable
+    deprecation channel for API consumers. Captured live 2026-07-27.
+  rfc8594: false
+  rfc8594_note: >-
+    The signal is a vendor-specific header rather than the RFC 8594 Sunset header or the
+    RFC 9745 Deprecation header. It is a real deprecation channel, not a standards-conformant one.
+  policy_owner: >-
+    Opendatasoft, the platform vendor. UK Power Networks publishes no deprecation policy of its own
+    for this API, so the operative lifecycle guarantees are the platform's, not the licensee's.
+  deprecated_operations: []
+  deprecated_operations_note: >-
+    No operation in either OpenAPI document carries deprecated: true. Grepped both specs.
+status_page: null
+status_page_note: >-
+  No status page exists for this API. UK Power Networks publishes none, and
+  opendatasoft.statuspage.io resolves only to an unclaimed default Atlassian Statuspage marketing
+  shell (HTTP 200, title "Improve Transparency with Statuspage"), not an Opendatasoft status feed.
+  Recorded as absent rather than pointed at a page that would mislead. UK Power Networks does
+  publish live network status — power cuts and faults — but that is operational data about the
+  electricity network, served as the ukpn-live-faults dataset, not availability data about the API.
+sla:
+  url: null
+  uptime_target: null
+  note: >-
+    No SLA, uptime target or support commitment is published for the Open Data Portal API. It is a
+    free open-data service with no contractual availability guarantee.
+data_lifecycle:
+  dataset_freshness_signal: >-
+    Every dataset carries a modified timestamp in its metadata (GET /catalog/datasets/{dataset_id}),
+    which is the practical way to detect change since API responses are served with
+    cache-control: no-store and carry no ETag.
+  publication_cadence: >-
+    Varies by dataset. LTDS tables are published twice yearly; live faults update continuously from
+    the Distribution Network Management System; carbon intensity accumulates half-hourly records.
+  registry_triage: >-
+    The official SDK repo runs a daily GitHub Actions audit against the portal catalogue that opens
+    a triage issue when new unmanaged datasets appear — a real, automated change-detection loop on
+    the data surface.
+changelog: changelog/uk-power-networks-changelog.yml
+related:
+  conventions: conventions/uk-power-networks-conventions.yml
+  errors: errors/uk-power-networks-problem-types.yml
