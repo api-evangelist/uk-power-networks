@@ -1,0 +1,547 @@
+aid: uk-power-networks
+name: UK Power Networks
+review:
+  question: >-
+    Does UK Power Networks — the electricity distributor for London, the South East
+    and the East of England, operating in a market that mandated smart-meter
+    infrastructure but never legislated a consumer energy data right — publish any
+    documented public API?
+  answer: true
+  date: '2026-07-27'
+  reviewer: API Evangelist
+  homeMarket: United Kingdom (England — LPN, SPN and EPN licence areas)
+  tier: network-distributor
+  method: >-
+    Anonymous HTTP probing of ukpowernetworks.co.uk and its subdomains, DNS
+    resolution of nine candidate developer hosts, retrieval and JSON-parse
+    validation of two OpenAPI documents served from the company's own portal
+    domain, an anonymous enumeration of all 136 catalogued datasets followed by a
+    per-dataset anonymous records call to measure exactly how much of the catalogue
+    answers without credentials, inspection of rate-limit and CORS response headers,
+    and verification of the official SDK on GitHub and PyPI. Every URL below carries
+    the HTTP status observed on 2026-07-27.
+
+findings:
+  summary: |
+    UK Power Networks publishes a real, documented, machine-readable API — and it is
+    the strongest network-distributor surface found in this study so far.
+
+    The portal at ukpowernetworks.opendatasoft.com is not a PDF library and not a map
+    viewer. It is an Opendatasoft Explore deployment on the company's own subdomain
+    that serves an OpenAPI 3.0.3 contract at a stable URL, exposes sixteen GET
+    endpoints with a documented query dialect, catalogues 136 UK Power Networks
+    datasets, exports the whole catalogue as DCAT-AP RDF, publishes an interactive
+    API console, and is backed by an official open-source Python client that UK
+    Power Networks' own DSO GitHub organisation ships to PyPI and was pushing commits
+    to on the morning this review ran.
+
+    The sector's central question is whether a mandate produces an implementation.
+    Here the answer is yes, but the mandate is not the one the sector usually
+    argues about. Britain mandated infrastructure, not a data right: the Smart DCC
+    is a licensed monopoly carrying smart-meter traffic under the Smart Energy Code,
+    and it produces no public API and no consumer portability. What produced this API
+    is a different and much quieter obligation — Ofgem's Data Best Practice Guidance
+    and Digitalisation Strategy and Action Plan Guidance, directed at network
+    licensees. UK Power Networks does not merely claim compliance with it; it
+    publishes its own maturity scores against Ofgem's principles as a dataset on the
+    portal, queryable through the same API. A regulator asked for open data and this
+    licensee shipped an endpoint, not a document. That is the finding.
+
+    The honest qualifier is the gate. The catalogue is fully anonymous, but records
+    are not. Enumerating all 136 datasets and calling the records endpoint on each
+    one anonymously returned HTTP 200 for 36 and HTTP 403 ForbiddenAccess for 99.
+    The blocked datasets carry "data_visible": false in their own metadata and a
+    description line that reads "To view this data please register and login" — and
+    they are blocked regardless of licence, including datasets published under
+    CC BY 4.0. Registration is free and self-serve, and the account page mints API
+    keys, so the friction is a signup form rather than an accreditation regime. But
+    "open data" and "openly accessible data" are not the same thing here, and the
+    record should say so.
+
+    On the consumer side there is nothing, and nothing is the correct answer. A
+    DNO has no retail customer account to expose. UK Power Networks knows who is
+    connected to which feeder, not who owes what on a bill. The consumer-data column
+    is empty not because the company withheld it but because the UK never created
+    the right and the company never held the data.
+
+mandate:
+  regime: other
+  regimeNote: >-
+    The obligation that actually produced this API is Ofgem's Data Best Practice
+    Guidance and Digitalisation Strategy and Action Plan Guidance, directed at
+    energy network licensees including electricity distribution network operators.
+    It is a transparency-and-digitalisation obligation on the network business, not
+    a consumer data right, and it is the operative regime for this organization.
+  secondaryRegime:
+    regime: smart-meter-infrastructure
+    note: >-
+      The UK's headline energy data mandate is infrastructural: the Data
+      Communications Company (Smart DCC) is a licensed monopoly carrying smart-meter
+      traffic, governed by the Smart Energy Code, and distribution network operators
+      are user parties to it. It applies to UK Power Networks, and it produces no
+      public API, no developer portal and no consumer portability. It is recorded
+      here so the two are never conflated: the mandate that gets cited is not the
+      mandate that produced the endpoint.
+    consumerDataRight: false
+  noConsumerDataRight: >-
+    Britain has no Consumer Data Right equivalent for energy, no Green Button
+    obligation and no Ontario-style regulation. There is nothing for UK Power
+    Networks to be a designated data holder under, and it is not one.
+  status: live-implemented
+  statusNote: >-
+    Verified by implementation, not by claim. A press release was not accepted as
+    evidence and none was needed: two OpenAPI 3.0.3 documents were downloaded from
+    the company's own domain and parsed, the catalogue endpoint returned 136
+    datasets to an anonymous caller, a records call returned live power-cut incident
+    rows, the DCAT-AP export rendered, and the company publishes its own
+    Data Best Practice maturity ratings as a queryable dataset. This is the
+    difference between "we comply" and "here is the contract".
+  verification:
+  - probe: OpenAPI contract, Explore API v2.1
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+    httpStatus: 200
+    contentType: application/json
+    bytes: 45942
+    fetched: '2026-07-27'
+    result: >-
+      Parses as OpenAPI 3.0.3. info.title "Explore API", info.version "v2.1",
+      servers[0].url https://ukpowernetworks.opendatasoft.com/api/explore/v2.1,
+      16 paths, securitySchemes apikey (type apiKey, in query, name apikey).
+      Saved verbatim to openapi/uk-power-networks-explore-api-v2-1-openapi.json.
+  - probe: OpenAPI contract, Explore API v2.0
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
+    httpStatus: 200
+    contentType: application/json
+    bytes: 45826
+    fetched: '2026-07-27'
+    result: >-
+      Parses as OpenAPI 3.0.3. Same 16 paths, servers[0].url
+      https://ukpowernetworks.opendatasoft.com/api/explore/v2.0. Saved verbatim to
+      openapi/uk-power-networks-explore-api-v2-0-openapi.json. Also served at the
+      alias /api/v2/swagger.json (HTTP 200, byte-identical size).
+  - probe: Live anonymous catalogue call
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets?limit=1
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: 'total_count: 136. No credentials sent.'
+  - probe: Live anonymous records call (real data returned)
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-live-faults/records?limit=1
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: >-
+      total_count 96. Returned an actual incident row from the Distribution Network
+      Management System — incidentreference INCD-109987-C, powercuttype "Planned",
+      nocustomeraffected 18, postcodesaffected "SS8 8", with a full postcode list and
+      a customer-facing narrative. This is live operational data over an anonymous
+      HTTP GET.
+  - probe: Self-published compliance artefact
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/ukpn-data-best-practice-live-maturity
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: >-
+      Dataset "Data Best Practice - Maturity Ratings", CC BY 4.0, 11 records. Its own
+      description states it shows "an aggregated view of our Data Best Practice
+      Maturity Ratings against Ofgem's Data Best Practice Principles" and cites the
+      Ofgem decision URL. The company scores itself against the regulator's
+      principles and exposes the scores through the API those principles produced.
+  - probe: Ofgem decision — Data Best Practice Guidance and DSAP Guidance
+    url: https://www.ofgem.gov.uk/decision/decision-updates-data-best-practice-guidance-and-digitalisation-strategy-and-action-plan-guidance
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: >-
+      Decision page reachable and is the source UK Power Networks itself cites. The
+      binding licence-condition text sits in a linked Direction PDF that was not
+      extracted, so this review does not quote a licence condition number. What is
+      asserted is what was verified: the regulator issued the guidance, and the
+      licensee publishes its maturity against it.
+  - probe: Company compliance page on the portal
+    url: https://ukpowernetworks.opendatasoft.com/pages/data-best-practice/
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: '"Our Maturity Framework for Ofgem''s Data Best Practice Principles".'
+
+dataStandard:
+  primary: >-
+    Opendatasoft Explore API v2.1, described by an OpenAPI 3.0.3 document — a real
+    machine-readable contract, but a platform-vendor API shape rather than an
+    energy-sector data standard.
+  catalogueStandard: >-
+    DCAT / DCAT-AP. The catalogue exports as RDF at
+    /api/explore/v2.1/catalog/exports/dcat (HTTP 200, application/rdf+xml), with
+    dcat: and dcatap: (data.europa.eu/r5r) namespaces declared in the document root.
+  domainStandard: >-
+    IEC CIM appears as data content, not as an API shape. The dataset
+    ukpn-ltds-cim ("Long Term Development Statement - Common Information Model
+    (CIM)") publishes CIM network models, and one of the portal's five licence
+    types is literally "UK Power Networks Shared Data Licence - Common Information
+    Model". The company is publishing CIM models through a non-CIM API.
+  notFound: >-
+    No Green Button, no ESPI, no CDR Consumer Data Standards, no OCPP, no OCPI, no
+    OpenADR, no IEEE 2030.5. Grepped across the OpenAPI documents, the catalogue
+    metadata and the portal pages probed. The OZEV National Chargepoint Register is
+    republished as a dataset (Open Government Licence v3.0) but is not exposed as
+    an OCPI endpoint.
+  finding: >-
+    An OpenAPI-described REST API plus DCAT-AP for the catalogue plus CIM as payload.
+    That is more standards conformance than most utilities manage, and none of it is
+    a consumer energy data standard — which is exactly consistent with a market that
+    never created a consumer energy data right.
+
+consumerVsMarketData:
+  consumerDataApi: false
+  consumerDataFinding: >-
+    A third party cannot obtain an individual customer's usage or billing data
+    through any UK Power Networks API, and there is no path that would produce one.
+    As a distribution network operator, UK Power Networks has no retail customer
+    account: metering data flows to suppliers and, for smart meters, across the
+    Smart DCC under the Smart Energy Code, neither of which UK Power Networks
+    exposes publicly. The UK has no CDR-equivalent, no Green Button obligation and
+    no accredited-recipient regime for energy, so there is no mandate that would
+    compel one either. The nearest thing on the portal is aggregate: smart meter
+    consumption published at substation and LV-feeder level, and
+    ukpn-smart-meter-installation-volumes (CC BY 4.0, 121 records) — statistics
+    about meters, never a person's meter.
+  marketDataOpen: true
+  marketDataFinding: >-
+    Genuinely open, genuinely queryable, and genuinely an API — the combination that
+    is rare in this sector. 136 datasets, 122 of them CC BY 4.0 and 6 under Open
+    Government Licence v3.0, spanning live faults, carbon intensity (33,376
+    records), the embedded capacity register, LTDS tables, flexibility dispatches
+    and tenders, curtailment events, network losses, DUoS charges, GIS asset and
+    boundary layers, and the OZEV National Chargepoint Register. Every dataset's
+    metadata is anonymously readable; records for 36 of them are too. The rest need
+    a free account.
+  licenceBreakdown:
+    source: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/facets?facet=license
+    httpStatus: 200
+    fetched: '2026-07-27'
+    counts:
+      CC BY 4.0: 122
+      Open Government Licence v3.0: 6
+      UK Power Networks Shared Data Licence - Connections: 5
+      Shared Dataset Agreement: 2
+      UK Power Networks Shared Data Licence - Common Information Model: 1
+  themeBreakdown:
+    Network Usage: 68
+    Network Infrastructure: 41
+    Supporting Information: 38
+  publisher: UK Power Networks, Company number 3870728 (all 136 datasets)
+  theSplit: >-
+    Wide open on market and network data, structurally empty on consumer data. This
+    split is not a policy choice and not a failure — it is the shape a regulator
+    carved. Ofgem obliged network licensees to publish network data well, so the
+    network data is an API. Parliament never created a consumer energy data right,
+    so there is no consumer API to build, and in any case the DNO is not the party
+    that holds the consumer relationship. Compare Australia, where the CDR reached
+    retailers and AEMO and produced eighty-four conformant consumer endpoints while
+    skipping distributors entirely: in Britain the mandate went to the distributor
+    and produced network transparency instead. Same sector, opposite halves.
+
+accessGate:
+  gate: self-serve
+  gated: true
+  gateFinding: >-
+    Free, self-serve, no approval, no accreditation, no licence signature for the
+    common case — but not anonymous for most of the catalogue. Registration is the
+    price of the data tables.
+  developerPath: >-
+    1. Browse or query the catalogue anonymously — no account needed for dataset
+    metadata, facets, DCAT export, or the records of 36 datasets. 2. For the other
+    99, create a free account at
+    https://ukpowernetworks.opendatasoft.com/signup/ (HTTP 200). 3. Go to the
+    account API keys page at
+    https://ukpowernetworks.opendatasoft.com/account/api-keys/ (HTTP 200,
+    redirecting to /login/?next=/account/api-keys/ when unauthenticated) and
+    generate a key. 4. Pass it as the apikey query parameter, per the OpenAPI
+    securitySchemes block. The official SDK documents exactly this flow and reads
+    the key from a UKPN_API_KEY environment variable.
+  anonymousReachTest:
+    method: >-
+      Enumerated all 136 dataset_ids through /api/explore/v2.1/catalog/datasets
+      (limit=100 plus offset=100), then issued
+      /catalog/datasets/{id}/records?limit=1 anonymously against each one.
+    fetched: '2026-07-27'
+    anonymouslyReadable: 36
+    forbidden: 99
+    note: >-
+      99 returned HTTP 403 with body
+      {"error_code":"ForbiddenAccess","message":"You don't have permission to access
+      the requested resource"}. Retried after a pause — stable, so this is a
+      per-dataset permission and not a quota. The blocked datasets expose
+      "data_visible": false in their own metadata and a description ending "To view
+      this data please register and login." Licence is not the discriminator:
+      CC BY 4.0 datasets including ukpn-network-losses and ukpn-hv-poles are among
+      the blocked. Anonymously readable ones include ukpn-live-faults,
+      ukpn-carbon-intensity, ozev-ukpn-national-chargepoint-register,
+      ukpn-smart-meter-installation-volumes, ukpn-licence-boundaries,
+      ukpn-network-statistics and ukpn-business-glossary.
+  additionalGates:
+  - surface: Connections datasets (5) and Common Information Model dataset (1)
+    gate: licence-agreement
+    note: >-
+      Published under "UK Power Networks Shared Data Licence - Connections" and
+      "UK Power Networks Shared Data Licence - Common Information Model" rather
+      than CC BY 4.0 — a bespoke company licence, not an open one.
+  - surface: Two datasets under "Shared Dataset Agreement"
+    gate: licence-agreement
+  - surface: Data request
+    gate: application-approval
+    note: >-
+      The portal navigation carries a "Data request" route for datasets not yet
+      published. Human workflow, not an API.
+
+authModel:
+  scheme: API key, passed as the apikey query parameter
+  evidence:
+  - source: OpenAPI 3.0.3 securitySchemes, both v2.1 and v2.0 documents
+    value: >-
+      {"apikey": {"type": "apiKey", "description": "API key to make authenticated
+      requests.", "name": "apikey", "in": "query"}}
+  - source: Official SDK README (UKPN-DSO/ukpyn)
+    value: >-
+      "1. Create an account at UK Power Networks Open Data Portal 2. Go to your
+      profile and navigate to API keys 3. Generate a new key", read from
+      UKPN_API_KEY.
+  oauth: false
+  oidc: false
+  mtls: false
+  accreditation: false
+  oidcDiscoveryProbe:
+    url: https://ukpowernetworks.opendatasoft.com/.well-known/openid-configuration
+    httpStatus: 404
+    fetched: '2026-07-27'
+    note: Fetched anonymously as required. No OIDC discovery document is served.
+  rateLimit:
+    anonymous:
+      limit: 10000
+      window: per day (x-ratelimit-reset observed as 2026-07-28 00:00:00+00:00)
+      remainingAtProbe: 9980
+      source: x-ratelimit-limit / x-ratelimit-remaining response headers on a 200 records call
+    perDatasetHeaders: >-
+      X-RateLimit-dataset-Remaining, X-RateLimit-dataset-Limit and
+      X-RateLimit-dataset-Reset are declared in access-control-expose-headers,
+      indicating a per-dataset budget in addition to the domain budget.
+  cors: 'access-control-allow-origin: * — browser clients can call it cross-origin.'
+  deprecationSignal: >-
+    ODS-Explore-API-Deprecation is declared in access-control-expose-headers, so the
+    platform has a machine-readable deprecation channel for API consumers.
+
+downloadableContracts:
+  found: true
+  specsCount: 2
+  openapiDirectory: openapi/
+  artifacts:
+  - file: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+    sourceUrl: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+    httpStatus: 200
+    contentType: application/json
+    bytes: 45942
+    fetched: '2026-07-27'
+    format: OpenAPI 3.0.3
+    parsed: true
+    paths: 16
+    verbatim: true
+  - file: openapi/uk-power-networks-explore-api-v2-0-openapi.json
+    sourceUrl: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
+    httpStatus: 200
+    contentType: application/json
+    bytes: 45826
+    fetched: '2026-07-27'
+    format: OpenAPI 3.0.3
+    parsed: true
+    paths: 16
+    verbatim: true
+  endpointsConfirmed:
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/facets
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/exports/{format}
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/exports/dcat{dcat_ap_format}
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}/records
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}/records/{record_id}
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}/facets
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}/attachments
+  - GET https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/datasets/{dataset_id}/exports/{format}
+  subdomainProbes:
+  - host: developer.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: developers.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: docs.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: api.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: apis.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: data.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: open.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: powercuts.ukpowernetworks.co.uk
+    dns: NXDOMAIN
+  - host: opendata.ukpowernetworks.co.uk
+    dns: resolves (100.28.104.175)
+    httpStatus: 000
+    note: DNS record exists but nothing answers on HTTPS. A stale or parked record.
+  - host: portal.ukpowernetworks.co.uk
+    dns: resolves (83.138.173.139)
+    httpStatus: 000
+    note: No HTTPS response.
+  - host: dso.ukpowernetworks.co.uk
+    dns: resolves (52.56.132.44)
+    httpStatus: 200
+    note: >-
+      WordPress site for the Distribution System Operator function. /wp-json/ returns
+      HTTP 200 — the stock WordPress REST API, a CMS artefact rather than a published
+      energy API. Not listed in apis.yml.
+  - host: maps.ukpowernetworks.co.uk
+    dns: resolves (13.87.93.237)
+    httpStatus: 403
+    note: Redirects to www.ukpowernetworks.co.uk/power-cut/map/, which is Akamai-protected.
+  - host: innovation.ukpowernetworks.co.uk
+    dns: resolves (52.56.132.44)
+  - host: digitalisation.ukpowernetworks.co.uk
+    dns: resolves (Akamai edgesuite)
+    httpStatus: 403
+  - host: ukpowernetworks.opendatasoft.com
+    dns: 'resolves (CNAME ukpowernetworks.aws-ec2-eu-central-1.opendatasoft.com)'
+    httpStatus: 200
+    note: The real developer surface. Vendor-hosted, company-branded, company subdomain.
+  pathProbes:
+  - path: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+    httpStatus: 200
+    note: Interactive API console. /api/explore/v2.1/console and /api/v1/console both redirect here.
+  - path: https://ukpowernetworks.opendatasoft.com/api/datasets/1.0/search/
+    httpStatus: 200
+    note: Legacy Opendatasoft v1 catalogue API, still answering. No swagger.json for it (404). Not listed in apis.yml.
+  - path: https://ukpowernetworks.opendatasoft.com/api/records/1.0/search/
+    httpStatus: 400
+    note: Legacy v1 records API — live but rejects a call without a dataset parameter.
+  - path: https://ukpowernetworks.opendatasoft.com/api/v1/swagger.json
+    httpStatus: 404
+  - path: https://ukpowernetworks.opendatasoft.com/openapi.json
+    httpStatus: 404
+  - path: https://ukpowernetworks.opendatasoft.com/swagger.json
+    httpStatus: 404
+  - path: https://ukpowernetworks.opendatasoft.com/api-docs
+    httpStatus: 404
+  - path: https://ukpowernetworks.opendatasoft.com/.well-known/security.txt
+    httpStatus: 200
+    note: >-
+      Contact is mailto:security@opendatasoft.com — the platform vendor's disclosure
+      contact, not UK Power Networks'. The company has published no security.txt of
+      its own on this host.
+  - path: https://ukpowernetworks.opendatasoft.com/robots.txt
+    httpStatus: 200
+    note: >-
+      Disallows /api/ for the general crawler while explicitly allowing Googlebot to
+      /api/ (minus exports). A search-visibility choice, not an access control — the
+      API answered every anonymous call regardless.
+  - path: https://www.ukpowernetworks.co.uk/
+    httpStatus: 403
+    note: >-
+      Akamai bot mitigation returns 403 to a plain HTTP client. Content is reachable
+      through a browser-equivalent fetch, which confirmed the company describes
+      itself as serving London, the South East and the East of England and receiving
+      "more than 70,000 connections enquiries each year".
+  - path: https://www.ukpowernetworks.co.uk/our-company/open-data-portal
+    httpStatus: 403
+    note: >-
+      Same Akamai 403 to a plain client. Browser-equivalent fetch confirms the
+      company's own framing: accounts are free, "access to our data tables will
+      require registration", and registered users gain "the functionality to create
+      API keys, maps and charts which can also be saved."
+
+officialTooling:
+  sdk:
+    name: ukpyn
+    description: >-
+      "UK Power Networks Distribution System Operator open source python package to
+      interact with our Open Data Portal and unlock value." Themed orchestrators for
+      ltds, dfes, dnoa, network, flexibility, curtailment, ders, gis and powerflow,
+      sync and async, typed, with exports to CSV/JSON/Excel/GeoJSON/Parquet.
+    repo: https://github.com/UKPN-DSO/ukpyn
+    repoHttpStatus: 200
+    docs: https://ukpn-dso.github.io/ukpyn/
+    docsHttpStatus: 200
+    pypi: https://pypi.org/project/ukpyn/
+    pypiHttpStatus: 200
+    version: 1.2.1
+    licence: CC-BY-4.0
+    created: '2026-02-04'
+    lastPush: '2026-07-27T07:26:03Z'
+    stars: 16
+    note: >-
+      Actively maintained — the last push landed hours before this review. An
+      operator that ships and maintains its own client library is running a
+      developer programme, not a data dump.
+  githubOrganizations:
+  - url: https://github.com/UKPN-DSO
+    apiStatus: 200
+    name: UK Power Networks - Distribution System Operator
+    publicRepos: 6
+    note: 'Repos: ukpyn, delta-rs, arrow-rs-object-store, interactive-svgs, DFES-visualisation, .github'
+  - url: https://github.com/UK-Power-Networks
+    apiStatus: 200
+    publicRepos: 1
+    note: DFES-visualisation only. Secondary org.
+  thirdPartyRedistribution:
+  - probe: data.gov.uk CKAN package search for "UK Power Networks"
+    url: https://ckan.publishing.service.gov.uk/api/3/action/package_search?q=%22UK%20Power%20Networks%22
+    httpStatus: 200
+    fetched: '2026-07-27'
+    result: >-
+      25 packages, published by the Greater London Authority (London Datastore)
+      rather than by UK Power Networks — flexibility dispatches, proposed
+      streetworks, data centre profiles and utilisation, low carbon technologies.
+      The company's data travels beyond its own portal, but the company does not
+      publish to the national catalogue itself.
+
+sources:
+- url: https://ukpowernetworks.opendatasoft.com/
+  type: Portal
+  httpStatus: 200
+  note: Open Data Portal home. Redirects to /pages/home/.
+- url: https://ukpowernetworks.opendatasoft.com/pages/home/
+  type: Documentation
+  httpStatus: 200
+  note: >-
+    Carries the site-wide banner "PLEASE LOGIN TO VIEW DATASETS", links the API
+    builder at /api/explore/v2.1/console, and links "Ofgem's Data Best Practice"
+    and the digitalisation strategy under "Our strategies".
+- url: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  type: Console
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/explore/
+  type: Data
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/pages/data-best-practice/
+  type: Compliance
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/pages/glossary/
+  type: Glossary
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/pages/reuses/
+  type: Showcase
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/signup/
+  type: Signup
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/login/
+  type: Login
+  httpStatus: 200
+- url: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+  type: Authentication
+  httpStatus: 200
+  note: Redirects to /login/?next=/account/api-keys/ when unauthenticated — the key-minting page exists.
+- url: https://dso.ukpowernetworks.co.uk/
+  type: DSO
+  httpStatus: 200
+- url: https://www.ukpowernetworks.co.uk/
+  type: Website
+  httpStatus: 403
+  note: Akamai bot mitigation. Content confirmed via browser-equivalent fetch.
+- url: https://www.ukpowernetworks.co.uk/our-company/open-data-portal
+  type: Documentation
+  httpStatus: 403
+  note: Akamai bot mitigation. Content confirmed via browser-equivalent fetch.

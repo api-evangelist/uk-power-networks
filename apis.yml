@@ -1,0 +1,148 @@
+aid: uk-power-networks
+url: https://raw.githubusercontent.com/api-evangelist/uk-power-networks/refs/heads/main/apis.yml
+name: UK Power Networks
+kind: company
+description: >-
+  UK Power Networks is the distribution network operator for London, the South East
+  and the East of England, running three electricity distribution licence areas —
+  London Power Networks (LPN), South Eastern Power Networks (SPN) and Eastern Power
+  Networks (EPN) — and the Distribution System Operator function that sits on top of
+  them. It is a poles-and-wires business: it owns the substations, cables and
+  overhead lines, holds the network capacity and connection queue, and handles more
+  than 70,000 connection enquiries a year, but it does not sell electricity and has
+  no retail customer relationship to expose. Its API posture is the exact inverse of
+  the usual utility story. Britain never legislated a consumer energy data right —
+  there is no CDR equivalent, no Green Button obligation, and the one thing the UK
+  did mandate was infrastructure (the Smart DCC carrying smart-meter traffic under
+  the Smart Energy Code), which produces no public API. What did produce an API was
+  Ofgem's Data Best Practice and digitalisation obligation on network licensees, and
+  UK Power Networks has actually implemented it: a live Opendatasoft-hosted Open Data
+  Portal serving 136 datasets over a documented, versioned REST API with a real
+  OpenAPI 3.0.3 contract published at its own domain, a DCAT-AP catalogue export, and
+  an official open-source Python client (ukpyn) on PyPI. So the split is unusually
+  sharp and unusually positive on one side: market and network data is genuinely open
+  and genuinely queryable — live faults, carbon intensity, embedded capacity register,
+  substation and feeder-level smart meter aggregates, LTDS tables, flexibility
+  dispatches, curtailment events — while consumer data is not merely closed but
+  absent, because as a DNO it holds no billable customer account to hand over. The
+  gate is free and self-serve rather than open: the catalogue and 36 of 136 datasets
+  answer anonymously, but the other 99 return HTTP 403 until you register a free
+  account and mint an API key.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Energy
+- United Kingdom
+- Utilities
+- Electricity
+- Grid
+- Distribution Network
+- Open Data
+- Smart Metering
+- DER
+- EV Charging
+- Carbon
+- Energy Markets
+created: '2026-07-27'
+modified: '2026-07-27'
+specificationVersion: '0.19'
+apis:
+- aid: uk-power-networks:uk-power-networks-explore-api-v2-1
+  name: UK Power Networks Open Data Explore API v2.1
+  description: >-
+    The current read-only REST API behind the UK Power Networks Open Data Portal,
+    served from the company's own opendatasoft.com subdomain under an Opendatasoft
+    Explore API v2.1 contract. Sixteen GET endpoints cover catalogue search, dataset
+    metadata, record query with an ODSQL where/select/group_by dialect, facets,
+    attachments, and bulk exports in CSV, JSON, Parquet, GeoJSON, GPX and DCAT-AP.
+    136 UK Power Networks datasets are catalogued: live faults from the Distribution
+    Network Management System, carbon intensity, the embedded capacity register,
+    LTDS tables, flexibility dispatches and tenders, curtailment events, network
+    losses, substation and LV-feeder smart meter aggregates, GIS asset and boundary
+    layers, and the OZEV National Chargepoint Register. Catalogue metadata answers
+    anonymously; records for most datasets require a free account API key passed as
+    an apikey query parameter. Anonymous rate limit observed at 10,000 calls per day.
+  humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
+  tags:
+  - Open Data
+  - Electricity
+  - Grid
+  - Network Infrastructure
+  - Network Usage
+  - Smart Metering
+  - Carbon
+  - EV Charging
+  properties:
+  - type: OpenAPI
+    url: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+  - type: APIReference
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+  - type: Console
+    url: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  - type: Documentation
+    url: https://ukpowernetworks.opendatasoft.com/pages/home/
+  - type: Portal
+    url: https://ukpowernetworks.opendatasoft.com/
+  - type: SDK
+    url: https://github.com/UKPN-DSO/ukpyn
+  - type: Signup
+    url: https://ukpowernetworks.opendatasoft.com/signup/
+  - type: Authentication
+    url: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+  - type: DCAT
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/exports/dcat
+- aid: uk-power-networks:uk-power-networks-explore-api-v2-0
+  name: UK Power Networks Open Data Explore API v2.0
+  description: >-
+    The previous version of the UK Power Networks Open Data Portal REST API, still
+    live and still serving its own OpenAPI 3.0.3 contract at the company domain. Same
+    sixteen endpoints and same catalogue as v2.1, distinguished by the version segment
+    in the base URL; the platform advertises deprecation through an
+    ODS-Explore-API-Deprecation response header. Recorded here because it is a real,
+    reachable, separately-contracted surface, not because it is the one to build on.
+  humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0
+  tags:
+  - Open Data
+  - Electricity
+  - Grid
+  - Deprecated
+  properties:
+  - type: OpenAPI
+    url: openapi/uk-power-networks-explore-api-v2-0-openapi.json
+  - type: APIReference
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
+  - type: Portal
+    url: https://ukpowernetworks.opendatasoft.com/
+common:
+- type: Website
+  url: https://www.ukpowernetworks.co.uk/
+- type: GitHubOrganization
+  url: https://github.com/UKPN-DSO
+- type: Portal
+  url: https://ukpowernetworks.opendatasoft.com/
+- type: Documentation
+  url: https://www.ukpowernetworks.co.uk/our-company/open-data-portal
+- type: Console
+  url: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+- type: Signup
+  url: https://ukpowernetworks.opendatasoft.com/signup/
+- type: Login
+  url: https://ukpowernetworks.opendatasoft.com/login/
+- type: Glossary
+  url: https://ukpowernetworks.opendatasoft.com/pages/glossary/
+- type: Compliance
+  url: https://ukpowernetworks.opendatasoft.com/pages/data-best-practice/
+- type: Regulation
+  url: https://www.ofgem.gov.uk/decision/decision-updates-data-best-practice-guidance-and-digitalisation-strategy-and-action-plan-guidance
+- type: Data
+  url: https://ukpowernetworks.opendatasoft.com/explore/
+- type: DSO
+  url: https://dso.ukpowernetworks.co.uk/
+- type: SDK
+  url: https://pypi.org/project/ukpyn/
+- type: Showcase
+  url: https://ukpowernetworks.opendatasoft.com/pages/reuses/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
