@@ -135,6 +135,9 @@ apis:
   - type: RateLimits
     url: rate-limits/uk-power-networks-rate-limits.yml
 common:
+- type: License
+  name: CC-BY-4.0
+  url: https://github.com/UKPN-DSO/ukpyn/blob/main/LICENSE
 - type: AgenticAccess
   url: agentic-access/uk-power-networks-agentic-access.yml
 - type: DomainSecurity
