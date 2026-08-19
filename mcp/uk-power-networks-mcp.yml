@@ -3,27 +3,29 @@ method: derived
 source: openapi/uk-power-networks-explore-api-v2-1-openapi.json
 status: candidate
 published_server: null
-search_note: No official or hosted MCP server exists for UK Power Networks. Searched the UKPN-DSO GitHub organisation
-  (6 repos, none MCP), npm (no ukpn/ukpowernetworks package; the only Opendatasoft-adjacent MCP packages are third-party
-  @pipeworx/mcp-* servers for French and Belgian Opendatasoft portals, not for UK Power Networks), and the portal's
-  own pages. Probed 2026-07-27. The tool list below is DERIVED from the OpenAPI as a candidate design, not a server
-  anyone can connect to today.
-third_party_note: A third-party generic Opendatasoft MCP server (@pipeworx/mcp-opendatasoft) exists on npm. It is
-  not published by UK Power Networks or by Opendatasoft and was not verified against this portal, so it is recorded
-  as context only and is not treated as this provider's MCP surface.
+search_note: No official or hosted MCP server exists for UK Power Networks. Searched the UKPN-DSO GitHub
+  organisation (6 repos, none MCP), npm (no ukpn/ukpowernetworks package; the only Opendatasoft-adjacent
+  MCP packages are third-party @pipeworx/mcp-* servers for French and Belgian Opendatasoft portals, not
+  for UK Power Networks), and the portal's own pages. Probed 2026-07-27. The tool list below is DERIVED
+  from the OpenAPI as a candidate design, not a server anyone can connect to today.
+third_party_note: A third-party generic Opendatasoft MCP server (@pipeworx/mcp-opendatasoft) exists on
+  npm. It is not published by UK Power Networks or by Opendatasoft and was not verified against this portal,
+  so it is recorded as context only and is not treated as this provider's MCP surface.
 server:
   name: uk-power-networks
   transport: http
   url: null
-  auth: The backing API takes an apikey query parameter; a server implementing these tools would hold the key server-side
-    and expose no credential to the agent.
+  auth: The backing API takes an apikey query parameter; a server implementing these tools would hold
+    the key server-side and expose no credential to the agent.
 design_notes:
 - Every tool is read-only. All 16 backing operations are HTTP GETs, so every tool is safe to retry.
 - 'discover_datasets then get_dataset then query_records is the mandatory sequence: field names are per-dataset
-  and must be read from the dataset fields array before any ODSQL clause is composed, or the call fails with ODSQLError.'
-- export_records is uncapped and should be preferred over paginating query_records past a few thousand rows.
-- 99 of 136 datasets return HTTP 403 ForbiddenAccess without an API key, so a server without a key can only serve
-  a third of the catalogue.
+  and must be read from the dataset fields array before any ODSQL clause is composed, or the call fails
+  with ODSQLError.'
+- export_records is uncapped and should be preferred over paginating query_records past a few thousand
+  rows.
+- 99 of 136 datasets return HTTP 403 ForbiddenAccess without an API key, so a server without a key can
+  only serve a third of the catalogue.
 tools:
 - name: get_datasets
   description: Query catalog datasets
@@ -214,3 +216,9 @@ tools:
   - select
   - lang
   - timezone
+deployment:
+  mode: none
+  verified: derived
+  tools: 16
+  checked: '2026-08-12'
+  source: catalog MCP census
