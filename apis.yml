@@ -41,33 +41,16 @@ created: '2026-07-27'
 modified: '2026-07-27'
 specificationVersion: '0.23'
 apis:
-- aid: uk-power-networks:uk-power-networks-explore-api-v2-1
-  name: UK Power Networks Open Data Explore API v2.1
-  description: 'The current read-only REST API behind the UK Power Networks Open Data Portal,
-    served from the company''s own opendatasoft.com subdomain under an Opendatasoft Explore API
-    v2.1 contract. Sixteen GET endpoints cover catalogue search, dataset metadata, record query
-    with an ODSQL where/select/group_by dialect, facets, attachments, and bulk exports in CSV,
-    JSON, Parquet, GeoJSON, GPX and DCAT-AP. 136 UK Power Networks datasets are catalogued: live
-    faults from the Distribution Network Management System, carbon intensity, the embedded capacity
-    register, LTDS tables, flexibility dispatches and tenders, curtailment events, network losses,
-    substation and LV-feeder smart meter aggregates, GIS asset and boundary layers, and the OZEV
-    National Chargepoint Register. Catalogue metadata answers anonymously; records for most datasets
-    require a free account API key passed as an apikey query parameter. Anonymous rate limit observed
-    at 10,000 calls per day.'
+- aid: uk-power-networks:uk-power-networks-catalog-api
+  name: UK Power Networks Catalog API
+  description: API to enumerate datasets
   humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
   baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
   tags:
-  - Open Data
-  - Electricity
-  - Grid
-  - Network Infrastructure
-  - Network Usage
-  - Smart Metering
-  - Carbon
-  - EV Charging
+  - Catalog
   properties:
   - type: OpenAPI
-    url: openapi/uk-power-networks-explore-api-v2-1-openapi.json
+    url: openapi/uk-power-networks-catalog-api-openapi.yml
   - type: APIReference
     url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
   - type: Console
@@ -84,8 +67,6 @@ apis:
     url: https://ukpowernetworks.opendatasoft.com/account/api-keys/
   - type: DCAT
     url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/exports/dcat
-  - type: Overlay
-    url: overlays/uk-power-networks-explore-api-v2-1-overlay.yaml
   - type: Authentication
     url: authentication/uk-power-networks-authentication.yml
   - type: Conventions
@@ -98,34 +79,34 @@ apis:
     url: examples/_index.yml
   - type: DataModel
     url: data-model/uk-power-networks-data-model.yml
-  - type: AgentSkill
-    url: skills/_index.yml
-  - type: MCPServer
-    url: mcp/uk-power-networks-mcp.yml
-- aid: uk-power-networks:uk-power-networks-explore-api-v2-0
-  name: UK Power Networks Open Data Explore API v2.0
-  description: The previous version of the UK Power Networks Open Data Portal REST API, still
-    live and still serving its own OpenAPI 3.0.3 contract at the company domain. Same sixteen
-    endpoints and same catalogue as v2.1, distinguished by the version segment in the base URL;
-    the platform advertises deprecation through an ODS-Explore-API-Deprecation response header.
-    Recorded here because it is a real, reachable, separately-contracted surface, not because
-    it is the one to build on.
-  humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
-  baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0
-  tags:
-  - Open Data
-  - Electricity
-  - Grid
-  - Deprecated
-  properties:
-  - type: OpenAPI
-    url: openapi/uk-power-networks-explore-api-v2-0-openapi.json
   - type: APIReference
     url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
+- aid: uk-power-networks:uk-power-networks-dataset-api
+  name: UK Power Networks Dataset API
+  description: API to work on records
+  humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
+  tags:
+  - Dataset
+  properties:
+  - type: OpenAPI
+    url: openapi/uk-power-networks-dataset-api-openapi.yml
+  - type: APIReference
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json
+  - type: Console
+    url: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
+  - type: Documentation
+    url: https://ukpowernetworks.opendatasoft.com/pages/home/
   - type: Portal
     url: https://ukpowernetworks.opendatasoft.com/
-  - type: Overlay
-    url: overlays/uk-power-networks-explore-api-v2-0-overlay.yaml
+  - type: SDK
+    url: https://github.com/UKPN-DSO/ukpyn
+  - type: Signup
+    url: https://ukpowernetworks.opendatasoft.com/signup/
+  - type: Authentication
+    url: https://ukpowernetworks.opendatasoft.com/account/api-keys/
+  - type: DCAT
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/catalog/exports/dcat
   - type: Authentication
     url: authentication/uk-power-networks-authentication.yml
   - type: Conventions
@@ -134,7 +115,17 @@ apis:
     url: errors/uk-power-networks-problem-types.yml
   - type: RateLimits
     url: rate-limits/uk-power-networks-rate-limits.yml
+  - type: Examples
+    url: examples/_index.yml
+  - type: DataModel
+    url: data-model/uk-power-networks-data-model.yml
+  - type: APIReference
+    url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
 common:
+- type: Overlay
+  url: overlays/uk-power-networks-explore-api-v2-1-overlay.yaml
+- type: Overlay
+  url: overlays/uk-power-networks-explore-api-v2-0-overlay.yaml
 - type: License
   name: CC-BY-4.0
   url: https://github.com/UKPN-DSO/ukpyn/blob/main/LICENSE
