@@ -23,6 +23,19 @@ description: 'UK Power Networks is the distribution network operator for London,
   but absent, because as a DNO it holds no billable customer account to hand over. The gate is
   free and self-serve rather than open: the catalogue and 36 of 136 datasets answer anonymously,
   but the other 99 return HTTP 403 until you register a free account and mint an API key.'
+deliveryModel:
+  model: saas
+  license: CC-BY-4.0
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - license
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Energy
@@ -122,6 +135,10 @@ apis:
   - type: APIReference
     url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
 common:
+- type: CodeOfConduct
+  url: https://github.com/UKPN-DSO/.github/blob/main/CODE_OF_CONDUCT.md
+- type: ContributionGuide
+  url: https://github.com/UKPN-DSO/ukpyn/blob/main/CONTRIBUTING.md
 - type: Overlay
   url: overlays/uk-power-networks-explore-api-v2-1-overlay.yaml
 - type: Overlay
