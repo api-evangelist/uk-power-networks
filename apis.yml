@@ -135,6 +135,9 @@ apis:
   - type: APIReference
     url: https://ukpowernetworks.opendatasoft.com/api/explore/v2.0/swagger.json
 common:
+- type: CapabilityMap
+  url: capabilities/uk-power-networks-capability-edges.yml
+  name: UK Power Networks Business Capability Map
 - type: CodeOfConduct
   url: https://github.com/UKPN-DSO/.github/blob/main/CODE_OF_CONDUCT.md
 - type: ContributionGuide
