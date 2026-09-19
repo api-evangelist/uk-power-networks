@@ -114,6 +114,8 @@ apis:
   humanURL: https://ukpowernetworks.opendatasoft.com/api-console/explore/v2.1/
   baseURL: https://ukpowernetworks.opendatasoft.com/api/explore/v2.1
   tags:
+  - Datasets
+  tags_raw:
   - Dataset
   properties:
   - type: OpenAPI
