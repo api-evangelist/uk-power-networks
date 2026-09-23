@@ -1,0 +1,24 @@
+{
+  "provider": "uk-power-networks",
+  "sources": [
+    "_original/uk-power-networks-explore-api-v2-0-openapi.json"
+  ],
+  "outputs": [
+    "uk-power-networks-catalog-api-openapi.yml",
+    "uk-power-networks-dataset-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "uk-power-networks-explore-api-v2-0-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "_original/uk-power-networks-explore-api-v2-1-openapi.json: archived document superseded by a larger archived document",
+    "uk-power-networks-catalog-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "uk-power-networks-dataset-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
