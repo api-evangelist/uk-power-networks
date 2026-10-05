@@ -1,0 +1,12 @@
+{
+ "url": "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json",
+ "requested_url": "https://ukpowernetworks.opendatasoft.com/api/explore/v2.1/swagger.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 45942,
+ "sha256": "cd0e83ba29e7f2806d98a3ba6c7362cf55fb489ffd64374fcf72c41981902a17",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
